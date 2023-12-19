@@ -67,6 +67,7 @@ void AJHCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,6 +87,16 @@ void AJHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AJHCharacter::Look);
+	
+		// 카메라 줌업
+		EnhancedInputComponent->BindAction(CameraZoomInAction, ETriggerEvent::Started, this, &AJHCharacter::CameraZoomIn);
+		// 카메라 줌다운
+		EnhancedInputComponent->BindAction(CameraZoomOutAction, ETriggerEvent::Started, this, &AJHCharacter::CameraZoomOut);
+		//// 자유시점
+		//EnhancedInputComponent->BindAction(FreeViewAction, ETriggerEvent::Started, this, &AJHCharacter::FreeView);
+		//// 원래시점
+		//EnhancedInputComponent->BindAction(FreeViewAction, ETriggerEvent::Completed, this, &AJHCharacter::OriginalView);
+
 	}
 	else
 	{
@@ -97,23 +108,29 @@ void AJHCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
+	// find out which way is forward
+	const FRotator Rotation = Controller->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 	if (Controller != nullptr)
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
 		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
+		//add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
+		
 	}
+	//else // 자유시점
+	//{
+	//	GetCharacterMovement()->bOrientRotationToMovement = false;
+	//	AddMovementInput(GetActorForwardVector(), MovementVector.Y);
+	//	AddMovementInput(GetActorRightVector(), MovementVector.X);
+	//}
 }
 
 void AJHCharacter::Look(const FInputActionValue& Value)
@@ -128,3 +145,28 @@ void AJHCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+
+void AJHCharacter::CameraZoomIn()
+{	
+	if (IsLocallyControlled())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "TEXT");
+		CameraBoom->TargetArmLength = CameraBoom->TargetArmLength - CameraZoomValue;
+	}
+
+}
+
+void AJHCharacter::CameraZoomOut()
+{
+	CameraBoom->TargetArmLength = CameraBoom->TargetArmLength + CameraZoomValue;
+}
+
+//void AJHCharacter::FreeView()
+//{
+//	bIsAltKeyPressing = true;
+//}
+//
+//void AJHCharacter::OriginalView()
+//{
+//	bIsAltKeyPressing = false;
+//}

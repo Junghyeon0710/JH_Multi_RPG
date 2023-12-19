@@ -44,6 +44,18 @@ class AJHCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** 카메라 확대 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* CameraZoomInAction;
+
+	/** 카매라 축소 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* CameraZoomOutAction;
+
+	/** 캐릭터 시점 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* FreeViewAction;
+
 public:
 	AJHCharacter();
 	
@@ -55,6 +67,18 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	/** 카메라줌인 콜백함수*/
+	void CameraZoomIn();
+
+	/** 카메라줌아웃 콜백함수*/
+	void CameraZoomOut();
+
+	///** 자유시점 콜백함수*/
+	//void FreeView();
+
+	///** 원래시점 콜백함수*/
+	//void OriginalView();
 			
 
 protected:
@@ -63,6 +87,16 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
+private:
+
+	/** 카메라 줌 업 다운 값*/
+	UPROPERTY(EditDefaultsOnly,Category = "Camera")
+	float CameraZoomValue = 40;
+
+	/** 알트키를 눌렀는 가*/
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+	bool bIsAltKeyPressing = false;
 
 public:
 	/** Returns CameraBoom subobject **/
