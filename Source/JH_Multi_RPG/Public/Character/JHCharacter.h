@@ -12,6 +12,7 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class AJH_PlayerController;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -58,12 +59,13 @@ class AJHCharacter : public ACharacter
 
 public:
 	AJHCharacter();
-	
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 
 	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
+	void Move();
+	void MoveReleased();
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
@@ -74,11 +76,11 @@ protected:
 	/** 카메라줌아웃 콜백함수*/
 	void CameraZoomOut();
 
-	///** 자유시점 콜백함수*/
-	//void FreeView();
+	/** 자유시점 콜백함수*/
+	void FreeView();
 
-	///** 원래시점 콜백함수*/
-	//void OriginalView();
+	/** 원래시점 콜백함수*/
+	void OriginalView();
 			
 
 protected:
@@ -92,11 +94,14 @@ private:
 
 	/** 카메라 줌 업 다운 값*/
 	UPROPERTY(EditDefaultsOnly,Category = "Camera")
-	float CameraZoomValue = 40;
+	float CameraZoomValue = 5;
 
 	/** 알트키를 눌렀는 가*/
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
-	bool bIsAltKeyPressing = false;
+	bool bIsLeftMouseButtonPressing = false;
+
+	UPROPERTY()
+	TObjectPtr<AJH_PlayerController> JH_PlayerController;
 
 public:
 	/** Returns CameraBoom subobject **/
