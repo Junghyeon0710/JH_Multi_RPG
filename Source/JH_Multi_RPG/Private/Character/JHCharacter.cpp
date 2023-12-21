@@ -99,6 +99,9 @@ void AJHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(FreeViewAction, ETriggerEvent::Triggered, this, &AJHCharacter::FreeView);
 		EnhancedInputComponent->BindAction(FreeViewAction, ETriggerEvent::Completed, this, &AJHCharacter::OriginalView);
 
+		// Skill
+		EnhancedInputComponent->BindAction(QSkillAction, ETriggerEvent::Completed, this, &AJHCharacter::QSkill);
+
 	}
 	else
 	{
@@ -156,4 +159,8 @@ void AJHCharacter::FreeView()
 void AJHCharacter::OriginalView()
 {
 	bIsLeftMouseButtonPressing = false;
+}
+
+void AJHCharacter::QSkill()
+{
 }

@@ -35,10 +35,11 @@ void AJH_PlayerController::OnTouchTriggered()
 	if (MouseHitResult.bBlockingHit) // 마우스 아래 뭔가 있으면
 	{
 		CachedDestination = MouseHitResult.ImpactPoint; // 위치를 마우스 히트지점으로 바꿔준다.
-
 	}
 	const FVector WorldDirection = (CachedDestination - ControllerPawn->GetActorLocation()).GetSafeNormal();
 	ControllerPawn->AddMovementInput(WorldDirection);
+
+	bAutoRunning = false; // 트리거 중이면 AutoRun못하게
 }
 
 void AJH_PlayerController::OnSetDestinationReleased()
@@ -71,6 +72,7 @@ void AJH_PlayerController::OnSetDestinationReleased()
 			}
 		}
 	}
+
 	FollowTime = 0.f;
 }
 

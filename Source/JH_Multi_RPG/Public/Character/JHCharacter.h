@@ -57,11 +57,20 @@ class AJHCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FreeViewAction;
 
+	/** Q스킬 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* QSkillAction;
+
 public:
 	AJHCharacter();
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+	// APawn interface
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	// To add mapping context
+	virtual void BeginPlay();
 
 	/** Called for movement input */
 	void Move();
@@ -82,13 +91,7 @@ protected:
 	/** 원래시점 콜백함수*/
 	void OriginalView();
 			
-
-protected:
-	// APawn interface
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	// To add mapping context
-	virtual void BeginPlay();
+	void QSkill();
 
 private:
 
