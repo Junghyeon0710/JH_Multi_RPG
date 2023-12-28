@@ -13,6 +13,7 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 class AJH_PlayerController;
+class USkillComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -91,8 +92,9 @@ protected:
 	/** 원래시점 콜백함수*/
 	void OriginalView();
 			
-	void QSkill();
+	/** Skills*/
 
+	void QSkill();
 private:
 
 	/** 카메라 줌 업 다운 값*/
@@ -105,6 +107,9 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<AJH_PlayerController> JH_PlayerController;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USkillComponent> SkillComponent;
 
 public:
 	/** Returns CameraBoom subobject **/

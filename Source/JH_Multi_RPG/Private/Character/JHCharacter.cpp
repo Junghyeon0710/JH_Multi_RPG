@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Player/JH_PlayerController.h"
+#include "Skill/SkillComponent.h"
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -42,6 +43,9 @@ AJHCharacter::AJHCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
 	FollowCamera->bUsePawnControlRotation = false; 
+
+	SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponet"));
+	SkillComponent->SetIsReplicated(true);
 
 }
 
@@ -100,7 +104,7 @@ void AJHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(FreeViewAction, ETriggerEvent::Completed, this, &AJHCharacter::OriginalView);
 
 		// Skill
-		EnhancedInputComponent->BindAction(QSkillAction, ETriggerEvent::Completed, this, &AJHCharacter::QSkill);
+		EnhancedInputComponent->BindAction(QSkillAction, ETriggerEvent::Started, this, &AJHCharacter::QSkill);
 
 	}
 	else
@@ -163,4 +167,6 @@ void AJHCharacter::OriginalView()
 
 void AJHCharacter::QSkill()
 {
+	SkillComponent->ServerQSkill(this);
 }
+
