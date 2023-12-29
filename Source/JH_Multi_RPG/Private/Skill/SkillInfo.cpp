@@ -3,11 +3,11 @@
 
 #include "Skill/SkillInfo.h"
 
-FJHSkillInfo USkillInfo::FindSkillInfo(const ESkillInput& SkillInput, bool bLogNotFound) const
+FJHSkillInfo USkillInfo::FindSkillInfo(const ESkillName& SkillName, bool bLogNotFound) const
 {
 	for (const FJHSkillInfo& info : SkillInformation)
 	{
-		if (info.SkillInput == SkillInput)
+		if (info.SkillName == SkillName)
 			return info;
 	}
 	return FJHSkillInfo();

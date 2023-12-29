@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Skill/SkillIInfoEnum.h"
 #include "SkillComponent.generated.h"
 
 class USkills;
@@ -22,18 +23,21 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(Server,Reliable)
-	void ServerQSkill(ACharacter* Character);
+	void ServerSkill(ACharacter* Character,ESkillInput SkillInput);
 
 	UFUNCTION(NetMulticast,Reliable)
-	void MultiQSkill(ACharacter* Character);
+	void MultiSkill(ACharacter* Character, ESkillInput SkillInput);
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	UPROPERTY()
-	TObjectPtr<USkills> Skill;
+	TArray<TObjectPtr<USkills>> ActivatableSkills;
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USkillInfo> SkillInfo;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<USkills>> StartSkillsClass;
 };

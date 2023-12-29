@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "SkillInput.h"
+#include "SkillIInfoEnum.h"
 #include "SkillInfo.generated.h"
 
 class UAnimMontage;
@@ -15,16 +15,13 @@ struct FJHSkillInfo
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	ESkillName SkillName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ESkillInput SkillInput;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UAnimMontage> SkillMontage;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UTexture2D> SkillIcon = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FText SkillName;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText SkillContext;
@@ -46,5 +43,5 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SkillInfo")
 	TArray<FJHSkillInfo> SkillInformation;
 
-	FJHSkillInfo FindSkillInfo(const ESkillInput& SkillInput, bool bLogNotFound = false) const;
+	FJHSkillInfo FindSkillInfo(const ESkillName& SkillName, bool bLogNotFound = false) const;
 };

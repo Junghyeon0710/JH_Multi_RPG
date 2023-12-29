@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "Player/JH_PlayerController.h"
 #include "Skill/SkillComponent.h"
+#include "Skill/SkillIInfoEnum.h"
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -105,6 +106,13 @@ void AJHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 		// Skill
 		EnhancedInputComponent->BindAction(QSkillAction, ETriggerEvent::Started, this, &AJHCharacter::QSkill);
+		EnhancedInputComponent->BindAction(WSkillAction, ETriggerEvent::Started, this, &AJHCharacter::WSkill);
+		EnhancedInputComponent->BindAction(ESkillAction, ETriggerEvent::Started, this, &AJHCharacter::ESkill);
+		EnhancedInputComponent->BindAction(RSkillAction, ETriggerEvent::Started, this, &AJHCharacter::RSkill);
+		EnhancedInputComponent->BindAction(ASkillAction, ETriggerEvent::Started, this, &AJHCharacter::ASkill);
+		EnhancedInputComponent->BindAction(SSkillAction, ETriggerEvent::Started, this, &AJHCharacter::SSkill);
+		EnhancedInputComponent->BindAction(DSkillAction, ETriggerEvent::Started, this, &AJHCharacter::DSkill);
+		EnhancedInputComponent->BindAction(FSkillAction, ETriggerEvent::Started, this, &AJHCharacter::FSkill);
 
 	}
 	else
@@ -167,6 +175,41 @@ void AJHCharacter::OriginalView()
 
 void AJHCharacter::QSkill()
 {
-	SkillComponent->ServerQSkill(this);
+	SkillComponent->ServerSkill(this,ESkillInput::ESI_InputQ);
+}
+
+void AJHCharacter::WSkill()
+{
+	SkillComponent->ServerSkill(this, ESkillInput::ESI_InputW);
+}
+
+void AJHCharacter::ESkill()
+{
+	SkillComponent->ServerSkill(this, ESkillInput::ESI_InputE);
+}
+
+void AJHCharacter::RSkill()
+{
+	SkillComponent->ServerSkill(this, ESkillInput::ESI_InputR);
+}
+
+void AJHCharacter::ASkill()
+{
+	SkillComponent->ServerSkill(this, ESkillInput::ESI_InputA);
+}
+
+void AJHCharacter::SSkill()
+{
+	SkillComponent->ServerSkill(this, ESkillInput::ESI_InputS);
+}
+
+void AJHCharacter::DSkill()
+{
+	SkillComponent->ServerSkill(this, ESkillInput::ESI_InputD);
+}
+
+void AJHCharacter::FSkill()
+{
+	SkillComponent->ServerSkill(this, ESkillInput::ESI_InputF);
 }
 

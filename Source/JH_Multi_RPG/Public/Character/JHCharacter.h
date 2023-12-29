@@ -62,6 +62,34 @@ class AJHCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* QSkillAction;
 
+	/** W스킬 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* WSkillAction;
+
+	/** E스킬 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ESkillAction;
+
+	/** R스킬 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* RSkillAction;
+
+	/** A스킬 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ASkillAction;
+
+	/** S스킬 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SSkillAction;
+
+	/** D스킬 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* DSkillAction;
+
+	/** F스킬 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* FSkillAction;
+
 public:
 	AJHCharacter();
 	virtual void Tick(float DeltaTime) override;
@@ -93,8 +121,14 @@ protected:
 	void OriginalView();
 			
 	/** Skills*/
-
 	void QSkill();
+	void WSkill();
+	void ESkill();
+	void RSkill();
+	void ASkill();
+	void SSkill();
+	void DSkill();
+	void FSkill();
 private:
 
 	/** 카메라 줌 업 다운 값*/

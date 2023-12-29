@@ -2,35 +2,38 @@
 
 
 #include "Skill/SkillComponent.h"
-#include "GameFramework/Character.h"
-#include "Animation/AnimMontage.h"
 #include "Skill/Skills.h"
 #include "Skill/SkillInfo.h"
-#include "Skill/SkillInput.h"
-
 
 USkillComponent::USkillComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void USkillComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	for (int32 i = 0; i < StartSkillsClass.Num();i++ )
+	{
+		ActivatableSkills.Add(NewObject<USkills>(this, StartSkillsClass[i]));
+	}
 }
 
-void USkillComponent::ServerQSkill_Implementation(ACharacter* Character)
+void USkillComponent::ServerSkill_Implementation(ACharacter* Character, ESkillInput SkillInput)
 {
-	MultiQSkill(Character);
+	MultiSkill(Character,SkillInput);
 }
 
-void USkillComponent::MultiQSkill_Implementation(ACharacter* Character)
+void USkillComponent::MultiSkill_Implementation(ACharacter* Character, ESkillInput SkillInput)
 {
-	FJHSkillInfo JHSkillInfo = SkillInfo->FindSkillInfo(ESkillInput::ESI_InputQ);
-	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(JHSkillInfo.SkillMontage);
-
+	for(USkills* Skill : ActivatableSkills)
+	{
+		if (Skill->SkillInput == SkillInput)
+		{
+			Skill->SkillExecute(Character);
+		}
+	}
 }
 
 void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
