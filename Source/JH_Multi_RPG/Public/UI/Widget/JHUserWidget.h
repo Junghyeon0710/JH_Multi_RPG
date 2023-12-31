@@ -15,7 +15,7 @@ class JH_MULTI_RPG_API UJHUserWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	/**이 위젯에 위젯 컨트롤러 설정해줍니다. */
-	UFUNCTION(BlueprinCallalbe)
+	UFUNCTION(BlueprintCallable)
 	void SetWidgetController(UObject* InWidgetController);
 
 	UPROPERTY(BlueprintReadOnly)
