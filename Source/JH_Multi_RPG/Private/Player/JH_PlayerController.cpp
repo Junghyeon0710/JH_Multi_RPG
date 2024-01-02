@@ -28,13 +28,6 @@ void AJH_PlayerController::BeginPlay()
 	}
 }
 
-void AJH_PlayerController::OnPossess(APawn* InPawn)
-{
-	Super::OnPossess(InPawn);
-
-
-}
-
 void AJH_PlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);

@@ -8,6 +8,7 @@
 
 
 class UJHUserWidget;
+class UJHWidgetController;
 class UOverlayWidgetController;
 /**
  * 
@@ -26,12 +27,18 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UJHUserWidget> OverlayWidgetClass;
-	
+	//
+	//UPROPERTY()
+	//TObjectPtr<UOverlayWidgetController> OverlayWidgetController;
+
+	//UPROPERTY(EditAnywhere)
+	//TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
+
 	UPROPERTY()
-	TObjectPtr<UOverlayWidgetController> OverlayWidgetController;
+	TObjectPtr<UJHWidgetController> OverlayWidgetController;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
+	TSubclassOf<UJHWidgetController> OverlayWidgetControllerClass;
 
-
+	 
 };

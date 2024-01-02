@@ -4,11 +4,13 @@
 #include "UI/JHHUD.h"
 #include "UI/Widget/JHUserWidget.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
+#include "UI/WidgetController/JHWidgetController.h"
 
 void AJHHUD::InitOverlay()
 {
 	OverlayWidget = CreateWidget<UJHUserWidget>(GetWorld(), OverlayWidgetClass);
-	OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
+	OverlayWidgetController = NewObject<UJHWidgetController>(this, OverlayWidgetControllerClass);
+	
 	OverlayWidget->SetWidgetController(OverlayWidgetController);
 	OverlayWidget->AddToViewport();
 }
