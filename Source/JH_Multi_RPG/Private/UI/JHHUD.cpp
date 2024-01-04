@@ -10,7 +10,6 @@ void AJHHUD::InitOverlay()
 {
 	OverlayWidget = CreateWidget<UJHUserWidget>(GetWorld(), OverlayWidgetClass);
 	OverlayWidgetController = NewObject<UJHWidgetController>(this, OverlayWidgetControllerClass);
-	
 	OverlayWidget->SetWidgetController(OverlayWidgetController);
 	OverlayWidget->AddToViewport();
 }

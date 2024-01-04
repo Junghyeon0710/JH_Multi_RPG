@@ -19,7 +19,9 @@ class JH_MULTI_RPG_API AJHHUD : public AHUD
 	GENERATED_BODY()
 
 public:
+	//virtual void Tick(FGeometry MyGeometry, float InDeleaTIme) override;
 	void InitOverlay();
+
 private:
 
 	UPROPERTY()
@@ -34,11 +36,10 @@ private:
 	//UPROPERTY(EditAnywhere)
 	//TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess = ture))
 	TObjectPtr<UJHWidgetController> OverlayWidgetController;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UJHWidgetController> OverlayWidgetControllerClass;
-
 	 
 };

@@ -24,6 +24,7 @@ void AJH_PlayerController::BeginPlay()
 		if (JHHUD)
 		{
 			JHHUD->InitOverlay(); 
+			
 		}
 	}
 }

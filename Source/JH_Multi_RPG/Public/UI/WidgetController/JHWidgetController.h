@@ -13,5 +13,6 @@ UCLASS()
 class JH_MULTI_RPG_API UJHWidgetController : public UObject
 {
 	GENERATED_BODY()
-	
+public:
+	void Live();
 };

@@ -22,6 +22,9 @@ public:
 	void SkillExecute(ACharacter* Character);
 
 	UPROPERTY(EditDefaultsOnly)
+	ESkillName SkillName;
+
+	UPROPERTY(EditDefaultsOnly)
 	ESkillInput SkillInput;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

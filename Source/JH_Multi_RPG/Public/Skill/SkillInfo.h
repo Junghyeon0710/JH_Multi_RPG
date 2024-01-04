@@ -17,7 +17,7 @@ struct FJHSkillInfo
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ESkillName SkillName;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	ESkillInput SkillInput;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

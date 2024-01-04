@@ -7,7 +7,7 @@
 
 USkillComponent::USkillComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void USkillComponent::BeginPlay()
@@ -17,6 +17,7 @@ void USkillComponent::BeginPlay()
 	for (int32 i = 0; i < StartSkillsClass.Num();i++ )
 	{
 		ActivatableSkills.Add(NewObject<USkills>(this, StartSkillsClass[i]));
+		SkillInfo->FindSkillInfo(ActivatableSkills[i]->SkillName).SkillInput = ActivatableSkills[i]->SkillInput
 	}
 }
 
