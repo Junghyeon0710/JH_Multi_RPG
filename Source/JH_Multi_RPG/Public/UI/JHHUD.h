@@ -10,6 +10,7 @@
 class UJHUserWidget;
 class UJHWidgetController;
 class UOverlayWidgetController;
+class USkillComponent;
 /**
  * 
  */
@@ -20,7 +21,7 @@ class JH_MULTI_RPG_API AJHHUD : public AHUD
 
 public:
 	//virtual void Tick(FGeometry MyGeometry, float InDeleaTIme) override;
-	void InitOverlay();
+	void InitOverlay(USkillComponent* SC);
 
 private:
 

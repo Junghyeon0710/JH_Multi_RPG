@@ -17,14 +17,14 @@ struct FJHSkillInfo
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ESkillName SkillName;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ESkillInput SkillInput;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UTexture2D> SkillIcon = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FText SkillContext;
+	FText SkillContext = FText();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 SkillLevel;

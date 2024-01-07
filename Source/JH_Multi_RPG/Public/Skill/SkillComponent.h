@@ -19,6 +19,8 @@ private:
 public:	
 	USkillComponent();
 
+	UFUNCTION(BlueprintCallable)
+	const TArray<ESkillName>& GetActivatableSkillNames() const;
 protected:
 	virtual void BeginPlay() override;
 
@@ -31,9 +33,13 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
 private:
 	UPROPERTY()
 	TArray<TObjectPtr<USkills>> ActivatableSkills;
+
+	UPROPERTY()
+	TArray<ESkillName> ActivatableSkillNames;
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USkillInfo> SkillInfo;

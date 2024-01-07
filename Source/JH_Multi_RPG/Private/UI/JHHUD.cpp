@@ -6,10 +6,17 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "UI/WidgetController/JHWidgetController.h"
 
-void AJHHUD::InitOverlay()
+void AJHHUD::InitOverlay(USkillComponent* SC)
 {
 	OverlayWidget = CreateWidget<UJHUserWidget>(GetWorld(), OverlayWidgetClass);
+	
 	OverlayWidgetController = NewObject<UJHWidgetController>(this, OverlayWidgetControllerClass);
+	const FWidgetControllerParms WidgetController(SC);
+	OverlayWidgetController->SetWidgetControllerParms(WidgetController);
+	
 	OverlayWidget->SetWidgetController(OverlayWidgetController);
+	OverlayWidgetController->BindCallbacksToFunctions();
 	OverlayWidget->AddToViewport();
+
+	
 }

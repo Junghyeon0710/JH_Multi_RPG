@@ -13,6 +13,7 @@
 #include "Player/JH_PlayerController.h"
 #include "Skill/SkillComponent.h"
 #include "Skill/SkillIInfoEnum.h"
+#include "UI/JHHUD.h"
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -76,6 +77,15 @@ void AJHCharacter::BeginPlay()
 	if (IsLocallyControlled())
 	{
 		JH_PlayerController = Cast<AJH_PlayerController>(Controller);
+		if (JH_PlayerController)
+		{
+			AJHHUD* JHHUD = Cast<AJHHUD>(JH_PlayerController->GetHUD());
+			if (JHHUD)
+			{
+				JHHUD->InitOverlay(SkillComponent);
+
+			}
+		}
 	}
 }
 

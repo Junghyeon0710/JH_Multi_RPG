@@ -10,6 +10,11 @@ USkillComponent::USkillComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+const TArray<ESkillName>& USkillComponent::GetActivatableSkillNames() const
+{
+	return ActivatableSkillNames;
+}
+
 void USkillComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -17,7 +22,7 @@ void USkillComponent::BeginPlay()
 	for (int32 i = 0; i < StartSkillsClass.Num();i++ )
 	{
 		ActivatableSkills.Add(NewObject<USkills>(this, StartSkillsClass[i]));
-		SkillInfo->FindSkillInfo(ActivatableSkills[i]->SkillName).SkillInput = ActivatableSkills[i]->SkillInput
+		ActivatableSkillNames.Add(ActivatableSkills[i]->SkillName);
 	}
 }
 

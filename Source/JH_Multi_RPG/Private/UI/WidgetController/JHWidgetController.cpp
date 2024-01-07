@@ -3,8 +3,13 @@
 
 #include "UI/WidgetController/JHWidgetController.h"
 
-void UJHWidgetController::Live()
+void UJHWidgetController::SetWidgetControllerParms(const FWidgetControllerParms& Parms)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Black, TEXT("Isvalid"));
-
+	SkillComponent = Parms.SkillComponent;
 }
+
+void UJHWidgetController::BindCallbacksToFunctions()
+{
+	/** 각 컨트롤러에서 구현하세요*/
+}
+

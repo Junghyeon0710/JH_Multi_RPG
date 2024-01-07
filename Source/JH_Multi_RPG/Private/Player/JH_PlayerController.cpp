@@ -5,7 +5,6 @@
 #include "Components/SplineComponent.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
-#include "UI/JHHUD.h"
 
 AJH_PlayerController::AJH_PlayerController()
 {
@@ -19,13 +18,6 @@ void AJH_PlayerController::BeginPlay()
 	if (IsLocalController())
 	{
 		bShowMouseCursor = true; //마우스 커서 보이게함
-		
-		AJHHUD* JHHUD = Cast<AJHHUD>(GetHUD());
-		if (JHHUD)
-		{
-			JHHUD->InitOverlay(); 
-			
-		}
 	}
 }
 

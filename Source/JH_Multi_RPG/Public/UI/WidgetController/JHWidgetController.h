@@ -6,6 +6,25 @@
 #include "UObject/NoExportTypes.h"
 #include "JHWidgetController.generated.h"
 
+
+class USkillInfo;
+class USkillComponent;
+
+
+USTRUCT(BlueprintType)
+struct FWidgetControllerParms
+{
+	GENERATED_BODY()
+
+	FWidgetControllerParms() {}
+	FWidgetControllerParms(USkillComponent* SC) :
+		SkillComponent(SC) {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<USkillComponent> SkillComponent;
+
+
+};
 /**
  * 
  */
@@ -14,5 +33,14 @@ class JH_MULTI_RPG_API UJHWidgetController : public UObject
 {
 	GENERATED_BODY()
 public:
-	void Live();
+
+	void SetWidgetControllerParms(const FWidgetControllerParms& Parms);
+	virtual void BindCallbacksToFunctions();
+protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SkillInfo")
+	TObjectPtr<USkillInfo> SkillInfo;
+
+	UPROPERTY(BlueprintReadOnly, Category = "SkillComponent")
+	TObjectPtr<USkillComponent> SkillComponent;
 };
