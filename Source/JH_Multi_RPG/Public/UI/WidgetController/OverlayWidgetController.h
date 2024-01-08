@@ -24,4 +24,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable,Category="SKillInfo")
 	FSkillInfoSignature SkillInfoSignature;
+
 };
+
+

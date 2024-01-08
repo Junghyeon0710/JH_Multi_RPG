@@ -4,10 +4,18 @@
 #include "Skill/SkillComponent.h"
 #include "Skill/Skills.h"
 #include "Skill/SkillInfo.h"
+#include "Net/UnrealNetwork.h"
 
 USkillComponent::USkillComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+}
+
+void USkillComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	DOREPLIFETIME_CONDITION(USkillComponent, ActivatableSkillNames,COND_OwnerOnly);
+	DOREPLIFETIME(USkillComponent, ActivatableSkills);
+
 }
 
 const TArray<ESkillName>& USkillComponent::GetActivatableSkillNames() const
@@ -19,27 +27,36 @@ void USkillComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	for (int32 i = 0; i < StartSkillsClass.Num();i++ )
+	/* 서버만 스킬을 가질 수 있습니다.**/
+	if (GetOwner() && GetOwner()->HasAuthority())
 	{
-		ActivatableSkills.Add(NewObject<USkills>(this, StartSkillsClass[i]));
-		ActivatableSkillNames.Add(ActivatableSkills[i]->SkillName);
+		for (int32 i = 0; i < StartSkillsClass.Num(); i++)
+		{
+			ActivatableSkills.Add(GetWorld()->SpawnActor<ASkills>(StartSkillsClass[i]));
+			ActivatableSkills[i]->SetOwner(GetOwner());
+			ActivatableSkillNames.Add(ActivatableSkills[i]->SkillName);
+		}
 	}
 }
 
-void USkillComponent::ServerSkill_Implementation(ACharacter* Character, ESkillInput SkillInput)
+void USkillComponent::ServerSkill_Implementation(ACharacter* Character, const ESkillInput& SkillInput)
 {
-	MultiSkill(Character,SkillInput);
-}
-
-void USkillComponent::MultiSkill_Implementation(ACharacter* Character, ESkillInput SkillInput)
-{
-	for(USkills* Skill : ActivatableSkills)
+	for (ASkills* Skill : ActivatableSkills)
 	{
 		if (Skill->SkillInput == SkillInput)
 		{
-			Skill->SkillExecute(Character);
+			MultiSkill(Character, SkillInput, Skill);
 		}
 	}
+}
+
+void USkillComponent::MultiSkill_Implementation(ACharacter* Character, const ESkillInput& SkillInput, ASkills* Skill)
+{
+	if (Skill)
+	{
+		Skill->SkillExecute(Character);
+	}
+
 }
 
 void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

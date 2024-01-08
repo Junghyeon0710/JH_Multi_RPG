@@ -2,12 +2,17 @@
 
 
 #include "Skill/Skills.h"
-#include "Skill/SkillInfo.h"
 #include "GameFramework/Character.h"
 #include "Animation/AnimMontage.h"
 
-void USkills::SkillExecute(ACharacter* Character)
+ASkills::ASkills()
 {
+	bReplicates = true;
+}
+
+void ASkills::SkillExecute(ACharacter* Character)
+{
+	
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(SkillMontage);
 }

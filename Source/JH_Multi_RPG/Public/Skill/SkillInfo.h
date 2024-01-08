@@ -15,9 +15,6 @@ struct FJHSkillInfo
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	ESkillName SkillName;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ESkillInput SkillInput;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -25,9 +22,6 @@ struct FJHSkillInfo
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText SkillContext = FText();
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 SkillLevel;
 
 };
 
@@ -40,8 +34,9 @@ class JH_MULTI_RPG_API USkillInfo : public UDataAsset
 	GENERATED_BODY()
 public:
 
+	/**스킬 정보 / TMap을 사용하여 시간복잡도를 줄임*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SkillInfo")
-	TArray<FJHSkillInfo> SkillInformation;
+	TMap<ESkillName,FJHSkillInfo> SkillInformation;
 
 	FJHSkillInfo FindSkillInfo(const ESkillName& SkillName, bool bLogNotFound = false) const;
 };

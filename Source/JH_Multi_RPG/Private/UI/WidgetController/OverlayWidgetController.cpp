@@ -7,10 +7,10 @@
 
 void UOverlayWidgetController::BindCallbacksToFunctions()
 {
-	for (auto& Info : SkillComponent->GetActivatableSkillNames())
+	for (auto& SkillName : SkillComponent->GetActivatableSkillNames())
 	{
-		FJHSkillInfo Skill = SkillInfo->FindSkillInfo(Info);
-		SkillInfoSignature.Broadcast(Skill);
+		FJHSkillInfo Info = SkillInfo->FindSkillInfo(SkillName);
+		SkillInfoSignature.Broadcast(Info);
 	}
 }
 

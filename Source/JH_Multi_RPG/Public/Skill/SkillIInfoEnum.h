@@ -3,6 +3,7 @@
 UENUM(BlueprintType)
 enum class ESkillName : uint8
 {
+	ESN_Default UMETA(DisplayName = "Default"),
 	ESN_Skill1 UMETA(DisplayName = "Skill1"),
 	ESN_Skill2 UMETA(DisplayName = "Skill2"),
 	ESN_Skill3 UMETA(DisplayName = "Skill3"),
@@ -17,6 +18,7 @@ enum class ESkillName : uint8
 UENUM(BlueprintType)
 enum class ESkillInput : uint8
 {
+	ESI_Default UMETA(DisplayName = "Default"),
 	ESI_InputQ UMETA(DisplayName = "InputQ"),
 	ESI_InputW UMETA(DisplayName = "InputW"),
 	ESI_InputE UMETA(DisplayName = "InputE"),

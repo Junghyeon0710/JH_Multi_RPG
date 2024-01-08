@@ -5,10 +5,16 @@
 
 FJHSkillInfo USkillInfo::FindSkillInfo(const ESkillName& SkillName, bool bLogNotFound) const
 {
-	for (const FJHSkillInfo& info : SkillInformation)
+	const FJHSkillInfo* Info = SkillInformation.Find(SkillName);
+	if (Info)
 	{
-		if (info.SkillName == SkillName)
-			return info;
+		return *Info;
 	}
+	
+	if (bLogNotFound)
+	{
+		UE_LOG(LogTemp,Error,TEXT("Not SkillInfo"))
+	}
+
 	return FJHSkillInfo();
 }

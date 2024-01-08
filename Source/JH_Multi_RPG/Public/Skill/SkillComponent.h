@@ -7,7 +7,7 @@
 #include "Skill/SkillIInfoEnum.h"
 #include "SkillComponent.generated.h"
 
-class USkills;
+class ASkills;
 class USkillInfo;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -18,6 +18,9 @@ private:
 	friend class AJHCharacter;
 public:	
 	USkillComponent();
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
 
 	UFUNCTION(BlueprintCallable)
 	const TArray<ESkillName>& GetActivatableSkillNames() const;
@@ -25,25 +28,22 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(Server,Reliable)
-	void ServerSkill(ACharacter* Character,ESkillInput SkillInput);
+	void ServerSkill(ACharacter* Character,const ESkillInput& SkillInput);
 
 	UFUNCTION(NetMulticast,Reliable)
-	void MultiSkill(ACharacter* Character, ESkillInput SkillInput);
-
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	void MultiSkill(ACharacter* Character, const ESkillInput& SkillInput,  ASkills* Skill);
 
 
 private:
-	UPROPERTY()
-	TArray<TObjectPtr<USkills>> ActivatableSkills;
+	UPROPERTY(Replicated)
+	TArray<TObjectPtr<ASkills>> ActivatableSkills;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<ESkillName> ActivatableSkillNames;
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USkillInfo> SkillInfo;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<USkills>> StartSkillsClass;
+	TArray<TSubclassOf<ASkills>> StartSkillsClass;
 };

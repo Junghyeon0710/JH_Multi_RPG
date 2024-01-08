@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class JH_MULTI_RPG_API UWSkills : public USkills
+class JH_MULTI_RPG_API AWSkills : public ASkills
 {
 	GENERATED_BODY()
 	
