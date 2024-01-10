@@ -12,7 +12,6 @@ ASkills::ASkills()
 
 void ASkills::SkillExecute(ACharacter* Character)
 {
-	
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(SkillMontage);
 }

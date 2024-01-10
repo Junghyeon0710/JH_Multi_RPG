@@ -9,6 +9,7 @@
 
 class USkillInfo;
 class USkillComponent;
+class UJHInventoryComponent;
 
 
 USTRUCT(BlueprintType)
@@ -17,11 +18,14 @@ struct FWidgetControllerParms
 	GENERATED_BODY()
 
 	FWidgetControllerParms() {}
-	FWidgetControllerParms(USkillComponent* SC) :
-		SkillComponent(SC) {}
+	FWidgetControllerParms(USkillComponent* SC, UJHInventoryComponent* IC) :
+		SkillComponent(SC), InventoryComponent(IC){}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<USkillComponent> SkillComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UJHInventoryComponent> InventoryComponent;
 
 
 };
@@ -43,4 +47,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "SkillComponent")
 	TObjectPtr<USkillComponent> SkillComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category= "InventoryComponent")
+	TObjectPtr<UJHInventoryComponent> InventoryComponent;
 };

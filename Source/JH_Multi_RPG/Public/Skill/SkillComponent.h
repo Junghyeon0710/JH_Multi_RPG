@@ -31,11 +31,11 @@ protected:
 	void ServerSkill(ACharacter* Character,const ESkillInput& SkillInput);
 
 	UFUNCTION(NetMulticast,Reliable)
-	void MultiSkill(ACharacter* Character, const ESkillInput& SkillInput,  ASkills* Skill);
+	void MultiSkill(ACharacter* Character, ASkills* Skill);
 
 
 private:
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	TArray<TObjectPtr<ASkills>> ActivatableSkills;
 
 	UPROPERTY(Replicated)

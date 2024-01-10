@@ -11,6 +11,9 @@ class UJHUserWidget;
 class UJHWidgetController;
 class UOverlayWidgetController;
 class USkillComponent;
+class UJHInventoryComponent;
+class UInventoryWidgetController;
+struct FWidgetControllerParms;
 /**
  * 
  */
@@ -21,7 +24,10 @@ class JH_MULTI_RPG_API AJHHUD : public AHUD
 
 public:
 	//virtual void Tick(FGeometry MyGeometry, float InDeleaTIme) override;
-	void InitOverlay(USkillComponent* SC);
+	void InitOverlay(USkillComponent* SC, UJHInventoryComponent* IC);
+
+	UFUNCTION(BlueprintCallable)
+	UInventoryWidgetController* GetInventoryWidgetController(const FWidgetControllerParms& Parms);
 
 private:
 
@@ -30,17 +36,17 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UJHUserWidget> OverlayWidgetClass;
-	//
-	//UPROPERTY()
-	//TObjectPtr<UOverlayWidgetController> OverlayWidgetController;
-
-	//UPROPERTY(EditAnywhere)
-	//TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
 
 	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess = ture))
 	TObjectPtr<UJHWidgetController> OverlayWidgetController;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UJHWidgetController> OverlayWidgetControllerClass;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = ture))
+	TObjectPtr<UInventoryWidgetController> InventoryWidgetController;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UInventoryWidgetController> InventoryWidgetControllerClass;
 	 
 };

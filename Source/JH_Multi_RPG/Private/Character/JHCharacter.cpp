@@ -14,6 +14,9 @@
 #include "Skill/SkillComponent.h"
 #include "Skill/SkillIInfoEnum.h"
 #include "UI/JHHUD.h"
+#include "Inventory/JHInventoryComponent.h"
+#include "Item/MasterItem.h"
+#include <../Public/Item/DataTable/MoneyDataTable.h>
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -49,6 +52,8 @@ AJHCharacter::AJHCharacter()
 	SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponet"));
 	SkillComponent->SetIsReplicated(true);
 
+	JHInventoryComponent = CreateDefaultSubobject<UJHInventoryComponent>(TEXT("InventoryComponent"));
+
 }
 
 void AJHCharacter::Tick(float DeltaTime)
@@ -61,6 +66,22 @@ void AJHCharacter::Tick(float DeltaTime)
 	}
 }
 
+void AJHCharacter::AddItem_Implementation(AMasterItem* Item)
+{
+	
+}
+
+void AJHCharacter::AddGold_Implementation(AMasterItem* Item)
+{
+	if (HasAuthority())
+	{
+		FMoneyDataTable* MoneyDataTable = Item->MoneyDataHandle.DataTable->FindRow<FMoneyDataTable>(Item->MoneyDataHandle.RowName, TEXT(""));
+		JHInventoryComponent->AddToGold(MoneyDataTable->Amount);
+		Item->Destroy();
+	}
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%d"), Gold));
+}
+
 void AJHCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -71,6 +92,7 @@ void AJHCharacter::BeginPlay()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			Subsystem->AddMappingContext(InventoryContext, 0);
 		}
 	}
 
@@ -82,8 +104,7 @@ void AJHCharacter::BeginPlay()
 			AJHHUD* JHHUD = Cast<AJHHUD>(JH_PlayerController->GetHUD());
 			if (JHHUD)
 			{
-				JHHUD->InitOverlay(SkillComponent);
-
+				JHHUD->InitOverlay(SkillComponent,JHInventoryComponent);
 			}
 		}
 	}
@@ -123,6 +144,9 @@ void AJHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(SSkillAction, ETriggerEvent::Started, this, &AJHCharacter::SSkill);
 		EnhancedInputComponent->BindAction(DSkillAction, ETriggerEvent::Started, this, &AJHCharacter::DSkill);
 		EnhancedInputComponent->BindAction(FSkillAction, ETriggerEvent::Started, this, &AJHCharacter::FSkill);
+
+		//Inventory
+		EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Started, this, &AJHCharacter::InventoryKeyPress);
 
 	}
 	else
@@ -221,5 +245,13 @@ void AJHCharacter::DSkill()
 void AJHCharacter::FSkill()
 {
 	SkillComponent->ServerSkill(this, ESkillInput::ESI_InputF);
+}
+
+void AJHCharacter::InventoryKeyPress()
+{
+	if (JHInventoryComponent)
+	{
+		JHInventoryComponent->PressInventoryKey();
+	}
 }
 

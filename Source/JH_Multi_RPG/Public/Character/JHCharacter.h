@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "../Interfaces/InventoryInterface.h"
 #include "JHCharacter.generated.h"
 
 class USpringArmComponent;
@@ -14,11 +15,12 @@ class UInputAction;
 struct FInputActionValue;
 class AJH_PlayerController;
 class USkillComponent;
+class UJHInventoryComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class AJHCharacter : public ACharacter
+class AJHCharacter : public ACharacter , public IInventoryInterface
 {
 	GENERATED_BODY()
 
@@ -33,6 +35,10 @@ class AJHCharacter : public ACharacter
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
+
+	/** InventoryContext */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputMappingContext* InventoryContext;
 
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -90,9 +96,20 @@ class AJHCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FSkillAction;
 
+	/** I 인벤토리 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InventoryAction;
+
 public:
 	AJHCharacter();
 	virtual void Tick(float DeltaTime) override;
+
+	/** InventoryInterface*/
+
+	virtual void AddItem_Implementation(AMasterItem* Item) override;
+	virtual void AddGold_Implementation(AMasterItem* Item) override;
+
+	/** /InventoryInterface*/
 
 protected:
 	// APawn interface
@@ -129,6 +146,9 @@ protected:
 	void SSkill();
 	void DSkill();
 	void FSkill();
+
+	/** 인벤토리 */
+	void InventoryKeyPress();
 private:
 
 	/** 카메라 줌 업 다운 값*/
@@ -145,10 +165,19 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkillComponent> SkillComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UJHInventoryComponent> JHInventoryComponent;
+
+	
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	FORCEINLINE class USkillComponent* GetSKillComponent() const { return SkillComponent; }
+	
+	FORCEINLINE class UJHInventoryComponent* GetInventoryComponent() const { return JHInventoryComponent; }
 };
 
