@@ -10,6 +10,7 @@
 class USkillInfo;
 class USkillComponent;
 class UJHInventoryComponent;
+class UHealthComponent;
 
 
 USTRUCT(BlueprintType)
@@ -18,8 +19,8 @@ struct FWidgetControllerParms
 	GENERATED_BODY()
 
 	FWidgetControllerParms() {}
-	FWidgetControllerParms(USkillComponent* SC, UJHInventoryComponent* IC) :
-		SkillComponent(SC), InventoryComponent(IC){}
+	FWidgetControllerParms(USkillComponent* SC, UJHInventoryComponent* IC ,UHealthComponent* HC) :
+		SkillComponent(SC), InventoryComponent(IC) , HealthComponent(HC){}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<USkillComponent> SkillComponent;
@@ -27,12 +28,14 @@ struct FWidgetControllerParms
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UJHInventoryComponent> InventoryComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UHealthComponent> HealthComponent;
 
 };
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class JH_MULTI_RPG_API UJHWidgetController : public UObject
 {
 	GENERATED_BODY()
@@ -40,7 +43,7 @@ public:
 
 	void SetWidgetControllerParms(const FWidgetControllerParms& Parms);
 	virtual void BindCallbacksToFunctions();
-protected:
+public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SkillInfo")
 	TObjectPtr<USkillInfo> SkillInfo;
@@ -50,4 +53,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category= "InventoryComponent")
 	TObjectPtr<UJHInventoryComponent> InventoryComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category = "HealthComponent")
+	TObjectPtr<UHealthComponent> HealthComponent;
 };

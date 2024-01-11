@@ -36,7 +36,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UJHUserWidget> JhInventoryWidget;
 
-	UPROPERTY(ReplicatedUsing = "OnRep_Gold")
+	UPROPERTY(VisibleAnywhere,ReplicatedUsing = OnRep_Gold)
 	int32 Gold;
 
 	UFUNCTION()
@@ -45,5 +45,7 @@ protected:
 private:
 
 	bool bIsInventoryOpen = true;
+public:
 
+	FORCEINLINE int32 GetGold() const { return Gold; }
 };

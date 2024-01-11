@@ -14,6 +14,7 @@ class USkillComponent;
 class UJHInventoryComponent;
 class UInventoryWidgetController;
 struct FWidgetControllerParms;
+class UHealthComponent;
 /**
  * 
  */
@@ -24,7 +25,7 @@ class JH_MULTI_RPG_API AJHHUD : public AHUD
 
 public:
 	//virtual void Tick(FGeometry MyGeometry, float InDeleaTIme) override;
-	void InitOverlay(USkillComponent* SC, UJHInventoryComponent* IC);
+	void InitOverlay(USkillComponent* SC, UJHInventoryComponent* IC, UHealthComponent* HC);
 
 	UFUNCTION(BlueprintCallable)
 	UInventoryWidgetController* GetInventoryWidgetController(const FWidgetControllerParms& Parms);

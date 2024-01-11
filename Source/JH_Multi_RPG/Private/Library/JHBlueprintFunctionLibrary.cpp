@@ -20,6 +20,7 @@ UInventoryWidgetController* UJHBlueprintFunctionLibrary::GetInventoryWidgetContr
                 FWidgetControllerParms Parms;
                 Parms.SkillComponent = JHCharacter->GetSKillComponent();
                 Parms.InventoryComponent = JHCharacter->GetInventoryComponent();
+                Parms.HealthComponent = JHCharacter->GetHealthComponent();
               
                 return  HUD->GetInventoryWidgetController(Parms);
             }

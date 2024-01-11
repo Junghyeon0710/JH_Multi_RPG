@@ -16,6 +16,7 @@ struct FInputActionValue;
 class AJH_PlayerController;
 class USkillComponent;
 class UJHInventoryComponent;
+class UHealthComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -162,12 +163,14 @@ private:
 	UPROPERTY()
 	TObjectPtr<AJH_PlayerController> JH_PlayerController;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USkillComponent> SkillComponent;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UJHInventoryComponent> JHInventoryComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly ,meta =(AllowPrivateAccess = "true"))
+	TObjectPtr<UHealthComponent> HealthComponent;
 	
 
 public:
@@ -177,7 +180,7 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	FORCEINLINE class USkillComponent* GetSKillComponent() const { return SkillComponent; }
-	
 	FORCEINLINE class UJHInventoryComponent* GetInventoryComponent() const { return JHInventoryComponent; }
+	FORCEINLINE class UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 };
 

@@ -9,7 +9,7 @@
 
 UJHInventoryComponent::UJHInventoryComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UJHInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -27,7 +27,6 @@ void UJHInventoryComponent::PressInventoryKey()
 		if (JhInventoryWidget == nullptr)
 		{
 			JhInventoryWidget = CreateWidget<UJHUserWidget>(GetWorld(), JhUserWidgetClass);
-
 		}
 		JhInventoryWidget->AddToViewport();
 
@@ -42,6 +41,11 @@ void UJHInventoryComponent::PressInventoryKey()
 void UJHInventoryComponent::AddToGold(int32 AddGold)
 {
 	Gold += AddGold;
+	
+	if (OnGoldChanged.IsBound())
+	{
+		OnGoldChanged.Broadcast(Gold);
+	}
 }
 
 void UJHInventoryComponent::BeginPlay()
@@ -52,7 +56,11 @@ void UJHInventoryComponent::BeginPlay()
 
 void UJHInventoryComponent::OnRep_Gold(int32 OldGold)
 {
-	OnGoldChanged.Broadcast(Gold);
+	if (OnGoldChanged.IsBound())
+	{
+		OnGoldChanged.Broadcast(Gold);
+	}
+
 }
 
 void UJHInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

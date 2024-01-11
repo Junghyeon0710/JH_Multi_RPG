@@ -17,7 +17,16 @@ class JH_MULTI_RPG_API UInventoryWidgetController : public UJHWidgetController
 	GENERATED_BODY()
 public:
 	virtual void BindCallbacksToFunctions() override;
-
+	
 	UPROPERTY(BlueprintAssignable,Category="Gold")
 	FOnGoldChangeSignature OnGoldChangeSignature;
+
+	UFUNCTION(BlueprintPure)
+	int32 GetOwnerGold() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetOwnerHealth() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetOwnerMaxHealth() const;
 };

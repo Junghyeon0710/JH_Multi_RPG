@@ -7,12 +7,12 @@
 #include "UI/WidgetController/JHWidgetController.h"
 #include "UI/WidgetController/InventoryWidgetController.h"
 
-void AJHHUD::InitOverlay(USkillComponent* SC, UJHInventoryComponent* IC)
+void AJHHUD::InitOverlay(USkillComponent* SC, UJHInventoryComponent* IC , UHealthComponent* HC)
 {
 	OverlayWidget = CreateWidget<UJHUserWidget>(GetWorld(), OverlayWidgetClass);
 	
 	OverlayWidgetController = NewObject<UJHWidgetController>(this, OverlayWidgetControllerClass);
-	const FWidgetControllerParms WidgetController(SC,IC);
+	const FWidgetControllerParms WidgetController(SC,IC, HC);
 	OverlayWidgetController->SetWidgetControllerParms(WidgetController);
 	
 

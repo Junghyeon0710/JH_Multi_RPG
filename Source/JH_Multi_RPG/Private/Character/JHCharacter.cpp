@@ -17,6 +17,7 @@
 #include "Inventory/JHInventoryComponent.h"
 #include "Item/MasterItem.h"
 #include <../Public/Item/DataTable/MoneyDataTable.h>
+#include "Character/Component/HealthComponent.h"
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -53,6 +54,10 @@ AJHCharacter::AJHCharacter()
 	SkillComponent->SetIsReplicated(true);
 
 	JHInventoryComponent = CreateDefaultSubobject<UJHInventoryComponent>(TEXT("InventoryComponent"));
+	JHInventoryComponent->SetIsReplicated(true);
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("JHHealthComponent"));
+	HealthComponent->SetIsReplicated(true);
 
 }
 
@@ -104,10 +109,11 @@ void AJHCharacter::BeginPlay()
 			AJHHUD* JHHUD = Cast<AJHHUD>(JH_PlayerController->GetHUD());
 			if (JHHUD)
 			{
-				JHHUD->InitOverlay(SkillComponent,JHInventoryComponent);
+				JHHUD->InitOverlay(SkillComponent,JHInventoryComponent,HealthComponent);
 			}
 		}
 	}
+
 }
 
 void AJHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

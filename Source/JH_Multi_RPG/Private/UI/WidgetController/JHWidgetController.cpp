@@ -7,6 +7,7 @@ void UJHWidgetController::SetWidgetControllerParms(const FWidgetControllerParms&
 {
 	SkillComponent = Parms.SkillComponent;
 	InventoryComponent = Parms.InventoryComponent;
+	HealthComponent = Parms.HealthComponent;
 }
 
 void UJHWidgetController::BindCallbacksToFunctions()
