@@ -2,6 +2,8 @@
 
 
 #include "UI/WidgetController/JHWidgetController.h"
+#include "Inventory/JHInventoryComponent.h"
+#include "Character/Component/HealthComponent.h"
 
 void UJHWidgetController::SetWidgetControllerParms(const FWidgetControllerParms& Parms)
 {
@@ -15,3 +17,17 @@ void UJHWidgetController::BindCallbacksToFunctions()
 	/** 각 컨트롤러에서 구현하세요*/
 }
 
+int32 UJHWidgetController::GetOwnerGold() const
+{
+	return InventoryComponent->GetGold();
+}
+
+float UJHWidgetController::GetOwnerHealth() const
+{
+	return HealthComponent->GetHealth();
+}
+
+float UJHWidgetController::GetOwnerMaxHealth() const
+{
+	return HealthComponent->GetMaxHealth();
+}

@@ -30,4 +30,6 @@ protected:
 	int32 Amount = 0;
 
 
+
+
 };

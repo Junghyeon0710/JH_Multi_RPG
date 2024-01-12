@@ -4,9 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Enum/ItemTypes.h"
 #include "MasterItem.generated.h"
 
+
 class USphereComponent;
+
+USTRUCT(BlueprintType)
+struct FSlotDataTable
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FDataTableRowHandle ItemId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Quantiy = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EItemType ItemType;
+};
 
 UCLASS()
 class JH_MULTI_RPG_API AMasterItem : public AActor
@@ -19,33 +36,29 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FDataTableRowHandle MoneyDataHandle;
+
+
+
 protected:
 	virtual void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 	UFUNCTION()
 	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-
-
-	/**Properties */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties")
-	FText ItemName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties")
-	FText ItemDescription;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Item Properties")
-	TObjectPtr<UTexture2D> ItemIcon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties")
-	TObjectPtr<UStaticMesh> ItemStaticMesh;
-	/* /Properties **/
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStaticMeshComponent> ItemMesh;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> ItemSphere;
+
+	/**Properties */
+	UPROPERTY(EditAnywhere)
+	FSlotDataTable ItemDataTable;
+
+public:
+
+	const FSlotDataTable& GetItemDataTable() const { return ItemDataTable; }
 
 };
  

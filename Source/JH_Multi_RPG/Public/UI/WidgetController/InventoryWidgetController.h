@@ -21,12 +21,5 @@ public:
 	UPROPERTY(BlueprintAssignable,Category="Gold")
 	FOnGoldChangeSignature OnGoldChangeSignature;
 
-	UFUNCTION(BlueprintPure)
-	int32 GetOwnerGold() const;
 
-	UFUNCTION(BlueprintPure)
-	float GetOwnerHealth() const;
-
-	UFUNCTION(BlueprintPure)
-	float GetOwnerMaxHealth() const;
 };

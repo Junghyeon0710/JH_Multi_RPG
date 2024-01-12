@@ -9,6 +9,7 @@
 class UJHUserWidget;
 class AMasterItem;
 class AJHCharacter;
+struct FSlotDataTable;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, int32 /* Gold*/);
 
@@ -26,6 +27,8 @@ public:
 	void PressInventoryKey();
 	void AddToGold(int32 AddGold);
 
+	AActor* TraceItemToPickUp(FSlotDataTable& SlotDataTable,bool& FoundItem);
+
 	FOnGoldChanged OnGoldChanged;
 protected:
 	virtual void BeginPlay() override;
@@ -35,6 +38,12 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UJHUserWidget> JhInventoryWidget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UJHUserWidget> IenterWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UJHUserWidget> IenterWidget;
 
 	UPROPERTY(VisibleAnywhere,ReplicatedUsing = OnRep_Gold)
 	int32 Gold;

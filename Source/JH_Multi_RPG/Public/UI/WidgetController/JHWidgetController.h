@@ -56,4 +56,14 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "HealthComponent")
 	TObjectPtr<UHealthComponent> HealthComponent;
+
+
+	UFUNCTION(BlueprintPure)
+	int32 GetOwnerGold() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetOwnerHealth() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetOwnerMaxHealth() const;
 };
