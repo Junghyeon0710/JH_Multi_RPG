@@ -153,6 +153,7 @@ void AJHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 		//Inventory
 		EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Started, this, &AJHCharacter::InventoryKeyPress);
+		EnhancedInputComponent->BindAction(PickupItemAction, ETriggerEvent::Started, this, &AJHCharacter::PickupItem);
 
 	}
 	else
@@ -259,5 +260,12 @@ void AJHCharacter::InventoryKeyPress()
 	{
 		JHInventoryComponent->PressInventoryKey();
 	}
+}
+
+void AJHCharacter::PickupItem()
+{
+	if(JHInventoryComponent == nullptr) return;
+
+	JHInventoryComponent->ServerAddToInventory();
 }
 

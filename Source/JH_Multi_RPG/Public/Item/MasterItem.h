@@ -38,6 +38,8 @@ public:
 	FDataTableRowHandle MoneyDataHandle;
 
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStaticMeshComponent> ItemMesh;
 
 protected:
 	virtual void BeginPlay() override;
@@ -46,8 +48,6 @@ protected:
 	UFUNCTION()
 	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UStaticMeshComponent> ItemMesh;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> ItemSphere;
@@ -57,7 +57,6 @@ protected:
 	FSlotDataTable ItemDataTable;
 
 public:
-
 	const FSlotDataTable& GetItemDataTable() const { return ItemDataTable; }
 
 };

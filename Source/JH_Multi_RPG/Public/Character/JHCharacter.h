@@ -101,6 +101,10 @@ class AJHCharacter : public ACharacter , public IInventoryInterface
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InventoryAction;
 
+	/** I 인벤토리 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* PickupItemAction;
+
 public:
 	AJHCharacter();
 	virtual void Tick(float DeltaTime) override;
@@ -150,6 +154,9 @@ protected:
 
 	/** 인벤토리 */
 	void InventoryKeyPress();
+
+	/** 아이템 줍기*/
+	void PickupItem();
 private:
 
 	/** 카메라 줌 업 다운 값*/

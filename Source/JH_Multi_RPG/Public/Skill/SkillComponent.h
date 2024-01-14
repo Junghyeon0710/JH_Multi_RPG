@@ -33,7 +33,6 @@ protected:
 	UFUNCTION(NetMulticast,Reliable)
 	void MultiSkill(ACharacter* Character, ASkills* Skill);
 
-
 private:
 	UPROPERTY()
 	TArray<TObjectPtr<ASkills>> ActivatableSkills;

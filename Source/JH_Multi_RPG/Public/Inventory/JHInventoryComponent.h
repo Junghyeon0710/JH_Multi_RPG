@@ -11,6 +11,22 @@ class AMasterItem;
 class AJHCharacter;
 struct FSlotDataTable;
 
+USTRUCT(BlueprintType)
+struct FInventoryItem
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TArray<FSlotDataTable> Swords;
+
+	UPROPERTY(EditAnywhere)
+	TArray<FSlotDataTable> Shields;
+
+	UPROPERTY(EditAnywhere)
+	TArray<FSlotDataTable> Potion;
+
+};
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, int32 /* Gold*/);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -27,7 +43,15 @@ public:
 	void PressInventoryKey();
 	void AddToGold(int32 AddGold);
 
+	void TraceItem(FHitResult& HitResult);
 	AActor* TraceItemToPickUp(FSlotDataTable& SlotDataTable,bool& FoundItem);
+	
+	UFUNCTION(Server, Reliable)
+	void ServerAddToInventory();
+
+	bool AddItemToInventory(const FSlotDataTable& DataTable, TArray<FSlotDataTable>& InventoryItems, int32 Size);
+
+	bool IsLocalPlayerController();
 
 	FOnGoldChanged OnGoldChanged;
 protected:
@@ -54,6 +78,19 @@ protected:
 private:
 
 	bool bIsInventoryOpen = true;
+	
+	UPROPERTY(EditAnywhere,Replicated)
+	FInventoryItem InventoryItem;
+
+	UPROPERTY(EditAnywhere,Category="Size")
+	int32 SwordSize = 10;
+
+	UPROPERTY(EditAnywhere, Category = "Size")	
+	int32 ShieldSize = 10;
+
+	UPROPERTY(EditAnywhere, Category = "Size")
+	int32 PotionSize = 10;
+
 public:
 
 	FORCEINLINE int32 GetGold() const { return Gold; }

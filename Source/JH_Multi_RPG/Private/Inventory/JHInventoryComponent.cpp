@@ -7,6 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Item/MasterItem.h"
+#include "Item/DataTable/ItemDataTable.h"
+#include "Kismet/KismetArrayLibrary.h"
 
 UJHInventoryComponent::UJHInventoryComponent()
 {
@@ -18,6 +20,41 @@ void UJHInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UJHInventoryComponent, Gold);
+	DOREPLIFETIME(UJHInventoryComponent, InventoryItem);
+}
+
+void UJHInventoryComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	IenterWidget = CreateWidget<UJHUserWidget>(GetWorld(), IenterWidgetClass);
+
+	//if (GetOwner() && GetOwner()->HasAuthority())
+	//{
+	//	InventoryItem.Swords.SetNum(SwordSize);
+	//	InventoryItem.Shields.SetNum(ShieldSize);
+	//	InventoryItem.Potion.SetNum(PotionSize);
+
+	//}
+
+}
+void UJHInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (IsLocalPlayerController())
+	{
+		FHitResult HitResult;
+		TraceItem(HitResult);
+		if (HitResult.bBlockingHit)
+		{
+			IenterWidget->AddToViewport();
+		}
+		else
+		{
+			IenterWidget->RemoveFromParent();
+		}
+	}
 }
 
 void UJHInventoryComponent::PressInventoryKey()
@@ -42,19 +79,19 @@ void UJHInventoryComponent::PressInventoryKey()
 void UJHInventoryComponent::AddToGold(int32 AddGold)
 {
 	Gold += AddGold;
-	
+
 	if (OnGoldChanged.IsBound())
 	{
 		OnGoldChanged.Broadcast(Gold);
 	}
 }
 
-AActor* UJHInventoryComponent::TraceItemToPickUp(FSlotDataTable& SlotDataTable, bool& FoundItem)
+void UJHInventoryComponent::TraceItem(FHitResult& HitResult)
 {
-	FHitResult HitResult;
+
 	FCollisionQueryParams CollisionParams;
 	FCollisionResponseParams parms;
-		
+
 	FVector Start = GetOwner()->GetActorLocation() - FVector(0.f, 0.f, 60.f);
 	FVector End = Start + GetOwner()->GetActorForwardVector() * 300.f;
 	GetWorld()->SweepSingleByChannel(
@@ -66,27 +103,59 @@ AActor* UJHInventoryComponent::TraceItemToPickUp(FSlotDataTable& SlotDataTable, 
 		FCollisionShape::MakeSphere(30),
 		CollisionParams
 	);
-	
-	AMasterItem* Item = Cast<AMasterItem>(HitResult.GetActor());
-	if (Item)
-	{
-		SlotDataTable = Item->GetItemDataTable();
-		FoundItem = true;
-		return Item;
-	}
+}
 
+AActor* UJHInventoryComponent::TraceItemToPickUp(FSlotDataTable& SlotDataTable, bool& FoundItem)
+{
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		FHitResult HitResult;
+		TraceItem(HitResult);
+		AMasterItem* Item = Cast<AMasterItem>(HitResult.GetActor());
+		if (Item)
+		{
+			SlotDataTable = Item->GetItemDataTable();
+			FoundItem = true;
+			return Item;
+		}
+	}
 	FoundItem = false;
 	return nullptr;
 }
 
-void UJHInventoryComponent::BeginPlay()
+void UJHInventoryComponent::ServerAddToInventory_Implementation()
 {
-	Super::BeginPlay();
+	FSlotDataTable PickupItemTable;
+	bool bIsFoundItem;
+	AActor* Item = TraceItemToPickUp(PickupItemTable, bIsFoundItem);
 
-
-	IenterWidget = CreateWidget<UJHUserWidget>(GetWorld(), IenterWidgetClass);
-
-
+	if (bIsFoundItem && Item)
+	{
+		switch (PickupItemTable.ItemType)
+		{
+		case EItemType::EIT_Sword:
+			if (AddItemToInventory(PickupItemTable, InventoryItem.Swords, SwordSize))
+			{
+				Item->Destroy();
+			}
+			break;
+		case EItemType::EIT_Shield:
+			if (AddItemToInventory(PickupItemTable, InventoryItem.Shields, ShieldSize))
+			{
+				Item->Destroy();
+			}
+			break;
+		case EItemType::EIT_Potion:
+			if (AddItemToInventory(PickupItemTable, InventoryItem.Potion, PotionSize))
+			{
+				Item->Destroy();
+			}
+			break;
+		default:
+			break;
+		}
+	
+	}
 }
 
 void UJHInventoryComponent::OnRep_Gold(int32 OldGold)
@@ -98,21 +167,56 @@ void UJHInventoryComponent::OnRep_Gold(int32 OldGold)
 
 }
 
-void UJHInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+bool UJHInventoryComponent::AddItemToInventory(const FSlotDataTable& DataTable, TArray<FSlotDataTable>& InventoryItems, int32 Size)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	FSlotDataTable SlotDataTable;
-	bool Founditem;
-	TraceItemToPickUp(SlotDataTable,Founditem);
-	if (Founditem)
+	for (auto& Item : InventoryItems)
 	{
-		IenterWidget->AddToViewport();
+		//먹은 아이템이랑 갖고있는 아이템이 같으면
+		if (Item.ItemId.RowName == DataTable.ItemId.RowName)
+		{
+			FItemDataTable* ItemDataTable = DataTable.ItemId.DataTable->FindRow<FItemDataTable>(DataTable.ItemId.RowName, TEXT(""));
+			//아이템 사이즈가 갖고있는 아이템과 인벤토리 아이템보다 크면 
+			if (ItemDataTable->StacikSize >= Item.Quantiy + DataTable.Quantiy)
+			{
+				//아이템 갯수를 늘려줌
+				Item.Quantiy = Item.Quantiy + DataTable.Quantiy;
+				return true;
+			}
+		}
 	}
-	else
+	// 똑같은 아이템이 없고 인벤토리칸보다 적게 있으면 추가
+	if (InventoryItems.Num() < Size)
 	{
-		IenterWidget->RemoveFromParent();
+		InventoryItems.Add(DataTable);
+		return true;
 	}
+	return false;
 }
+
+bool UJHInventoryComponent::IsLocalPlayerController()
+{
+	const ENetMode NetMode = GetNetMode();
+
+	if (NetMode == NM_Standalone)
+	{
+		// Not networked.
+		return true;
+	}
+
+	if (NetMode == NM_Client && GetOwner()->GetLocalRole() == ROLE_AutonomousProxy)
+	{
+		// Networked client in control.
+		return true;
+	}
+
+	if (GetOwner()->GetRemoteRole() == ROLE_AutonomousProxy && GetOwner()->GetLocalRole() == ROLE_Authority)
+	{
+		// Local authority in control.
+		return true;
+	}
+
+	return false;
+}
+
 
 

@@ -57,7 +57,7 @@ void AMasterItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	{
 		/** 오버랩 된 액터가 인터페이스 있으면 아아템 추가 후 삭제*/
 		IInventoryInterface::Execute_AddItem(OtherActor, this);
-		Destroy();
+		//Destroy();
 	}
 }
 
