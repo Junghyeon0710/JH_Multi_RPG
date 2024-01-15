@@ -6,7 +6,11 @@
 #include "UI/WidgetController/JHWidgetController.h"
 #include "InventoryWidgetController.generated.h"
 
+struct FInventoryItem;
+struct FSlotDataTable;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChangeSignature, int32, NewGold);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryItemAddSignature, const FInventoryItem&, Item);
 
 /**
  * 
@@ -21,5 +25,12 @@ public:
 	UPROPERTY(BlueprintAssignable,Category="Gold")
 	FOnGoldChangeSignature OnGoldChangeSignature;
 
+	UPROPERTY(BlueprintAssignable, Category = "Item")
+	FOnInventoryItemAddSignature OnInventoryItemAddSignature;
 
+	UFUNCTION(BlueprintPure)
+	const FInventoryItem& GetOwnerInventoryItem() const;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateItemsInIventoryUI(const TArray<FSlotDataTable>& Item);
 };

@@ -19,7 +19,7 @@ struct FSlotDataTable
 	FDataTableRowHandle ItemId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Quantiy = 1;
+	int32 Quantiy = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EItemType ItemType;

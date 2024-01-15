@@ -12,6 +12,20 @@ void UInventoryWidgetController::BindCallbacksToFunctions()
 
 		}
 	);
+	InventoryComponent->OnInventoryItemAdd.AddLambda(
+		[this](const FInventoryItem& Item)
+		{
+		
+			OnInventoryItemAddSignature.Broadcast(Item);
+		}
+	);
 }
+
+const FInventoryItem& UInventoryWidgetController::GetOwnerInventoryItem() const
+{
+	return InventoryComponent->GetInventoryItem();
+}
+
+
 
 

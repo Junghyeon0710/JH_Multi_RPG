@@ -20,22 +20,27 @@ void UJHInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UJHInventoryComponent, Gold);
-	DOREPLIFETIME(UJHInventoryComponent, InventoryItem);
+	DOREPLIFETIME_CONDITION(UJHInventoryComponent, InventoryItem,COND_OwnerOnly);
 }
 
 void UJHInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	IenterWidget = CreateWidget<UJHUserWidget>(GetWorld(), IenterWidgetClass);
+	if (IsLocalPlayerController())
+	{
+		IenterWidget = CreateWidget<UJHUserWidget>(GetWorld(), IenterWidgetClass);
+		JhInventoryWidget = CreateWidget<UJHUserWidget>(GetWorld(), JhUserWidgetClass);
+	}
+	
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		
+		StartInventorySlot(InventoryItem.Swords, SwordSize);
+		StartInventorySlot(InventoryItem.Shields, ShieldSize);
+		StartInventorySlot(InventoryItem.Potion, PotionSize);
 
-	//if (GetOwner() && GetOwner()->HasAuthority())
-	//{
-	//	InventoryItem.Swords.SetNum(SwordSize);
-	//	InventoryItem.Shields.SetNum(ShieldSize);
-	//	InventoryItem.Potion.SetNum(PotionSize);
-
-	//}
+	}
 
 }
 void UJHInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -44,15 +49,22 @@ void UJHInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	if (IsLocalPlayerController())
 	{
-		FHitResult HitResult;
-		TraceItem(HitResult);
-		if (HitResult.bBlockingHit)
-		{
+		FSlotDataTable TraceItemDataTable;
+		bool bFoundItem;
+		TraceItemToPickUp(TraceItemDataTable, bFoundItem);
+		if (IenterWidget && bFoundItem)
+		{	
+			if (OnTraceItemInfo.IsBound())
+			{
+				OnTraceItemInfo.Broadcast(TraceItemDataTable);
+			}
 			IenterWidget->AddToViewport();
+	
 		}
-		else
+		else if(IenterWidget)
 		{
 			IenterWidget->RemoveFromParent();
+			
 		}
 	}
 }
@@ -62,10 +74,6 @@ void UJHInventoryComponent::PressInventoryKey()
 	bIsInventoryOpen = !bIsInventoryOpen;
 	if (!bIsInventoryOpen)
 	{
-		if (JhInventoryWidget == nullptr)
-		{
-			JhInventoryWidget = CreateWidget<UJHUserWidget>(GetWorld(), JhUserWidgetClass);
-		}
 		JhInventoryWidget->AddToViewport();
 
 	}
@@ -83,6 +91,14 @@ void UJHInventoryComponent::AddToGold(int32 AddGold)
 	if (OnGoldChanged.IsBound())
 	{
 		OnGoldChanged.Broadcast(Gold);
+	}
+}
+
+void UJHInventoryComponent::StartInventorySlot(TArray<FSlotDataTable>& Items, int32 Size)
+{
+	for (int i = 0; i < Size; i++)
+	{
+		Items.Add(FSlotDataTable());
 	}
 }
 
@@ -107,18 +123,17 @@ void UJHInventoryComponent::TraceItem(FHitResult& HitResult)
 
 AActor* UJHInventoryComponent::TraceItemToPickUp(FSlotDataTable& SlotDataTable, bool& FoundItem)
 {
-	if (GetOwner() && GetOwner()->HasAuthority())
+
+	FHitResult HitResult;
+	TraceItem(HitResult);
+	AMasterItem* Item = Cast<AMasterItem>(HitResult.GetActor());
+	if (Item)
 	{
-		FHitResult HitResult;
-		TraceItem(HitResult);
-		AMasterItem* Item = Cast<AMasterItem>(HitResult.GetActor());
-		if (Item)
-		{
-			SlotDataTable = Item->GetItemDataTable();
-			FoundItem = true;
-			return Item;
-		}
+		SlotDataTable = Item->GetItemDataTable();
+		FoundItem = true;
+		return Item;
 	}
+
 	FoundItem = false;
 	return nullptr;
 }
@@ -134,19 +149,19 @@ void UJHInventoryComponent::ServerAddToInventory_Implementation()
 		switch (PickupItemTable.ItemType)
 		{
 		case EItemType::EIT_Sword:
-			if (AddItemToInventory(PickupItemTable, InventoryItem.Swords, SwordSize))
+			if (AddItemToInventory(PickupItemTable, InventoryItem.Swords, SwordCount))
 			{
 				Item->Destroy();
 			}
 			break;
 		case EItemType::EIT_Shield:
-			if (AddItemToInventory(PickupItemTable, InventoryItem.Shields, ShieldSize))
+			if (AddItemToInventory(PickupItemTable, InventoryItem.Shields, ShieldCount))
 			{
 				Item->Destroy();
 			}
 			break;
 		case EItemType::EIT_Potion:
-			if (AddItemToInventory(PickupItemTable, InventoryItem.Potion, PotionSize))
+			if (AddItemToInventory(PickupItemTable, InventoryItem.Potion, PotionCount))
 			{
 				Item->Destroy();
 			}
@@ -154,8 +169,12 @@ void UJHInventoryComponent::ServerAddToInventory_Implementation()
 		default:
 			break;
 		}
-	
 	}
+}
+
+void UJHInventoryComponent::ClientAddtoInventory_Implementation(const FInventoryItem& Item)
+{
+	OnInventoryItemAdd.Broadcast(Item);
 }
 
 void UJHInventoryComponent::OnRep_Gold(int32 OldGold)
@@ -164,10 +183,9 @@ void UJHInventoryComponent::OnRep_Gold(int32 OldGold)
 	{
 		OnGoldChanged.Broadcast(Gold);
 	}
-
 }
 
-bool UJHInventoryComponent::AddItemToInventory(const FSlotDataTable& DataTable, TArray<FSlotDataTable>& InventoryItems, int32 Size)
+bool UJHInventoryComponent::AddItemToInventory(const FSlotDataTable& DataTable, TArray<FSlotDataTable>& InventoryItems, int32& Count)
 {
 	for (auto& Item : InventoryItems)
 	{
@@ -180,14 +198,19 @@ bool UJHInventoryComponent::AddItemToInventory(const FSlotDataTable& DataTable, 
 			{
 				//아이템 갯수를 늘려줌
 				Item.Quantiy = Item.Quantiy + DataTable.Quantiy;
+				ClientAddtoInventory(InventoryItem);
 				return true;
 			}
 		}
 	}
 	// 똑같은 아이템이 없고 인벤토리칸보다 적게 있으면 추가
-	if (InventoryItems.Num() < Size)
-	{
-		InventoryItems.Add(DataTable);
+	if (Count <= InventoryItems.Num() && InventoryItems[Count].Quantiy == 0)
+	{		
+		InventoryItems[Count].ItemId = DataTable.ItemId;
+		InventoryItems[Count].ItemType = DataTable.ItemType;
+		InventoryItems[Count].Quantiy = DataTable.Quantiy;		
+		Count++;
+		ClientAddtoInventory(InventoryItem);
 		return true;
 	}
 	return false;

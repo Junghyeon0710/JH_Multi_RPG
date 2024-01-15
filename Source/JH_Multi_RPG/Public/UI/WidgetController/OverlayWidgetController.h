@@ -7,9 +7,10 @@
 #include "OverlayWidgetController.generated.h"
 
 struct FJHSkillInfo;
+struct  FSlotDataTable;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSkillInfoSignature, const FJHSkillInfo&, SkillInfo);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTraceItemInfoSignature, const FSlotDataTable&, Item);
 
 
 /**
@@ -24,8 +25,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable,Category="SKillInfo")
 	FSkillInfoSignature SkillInfoSignature;
+	
+	UPROPERTY(BlueprintAssignable, Category = "ItemInfo")
+	FTraceItemInfoSignature TraceItemInfoSignature;
 
-
+	//UFUNCTION(BlueprintCallable)
+	//FSlotDataTable GetItemDataTable();
 };
 
 
