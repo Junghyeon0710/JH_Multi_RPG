@@ -69,7 +69,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UJHUserWidget> JhUserWidgetClass;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UJHUserWidget> JhInventoryWidget;
 
 	UPROPERTY(EditAnywhere)

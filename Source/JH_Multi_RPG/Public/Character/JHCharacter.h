@@ -17,6 +17,7 @@ class AJH_PlayerController;
 class USkillComponent;
 class UJHInventoryComponent;
 class UHealthComponent;
+class USceneCaptureComponent2D;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -178,6 +179,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly ,meta =(AllowPrivateAccess = "true"))
 	TObjectPtr<UHealthComponent> HealthComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USceneCaptureComponent2D> SceneCaptureComponent2D;
 	
 
 public:

@@ -18,6 +18,7 @@
 #include "Item/MasterItem.h"
 #include <../Public/Item/DataTable/MoneyDataTable.h>
 #include "Character/Component/HealthComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -58,6 +59,9 @@ AJHCharacter::AJHCharacter()
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("JHHealthComponent"));
 	HealthComponent->SetIsReplicated(true);
+
+	SceneCaptureComponent2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComponent2D"));
+	SceneCaptureComponent2D->SetupAttachment(RootComponent);
 
 }
 
@@ -112,6 +116,7 @@ void AJHCharacter::BeginPlay()
 				JHHUD->InitOverlay(SkillComponent,JHInventoryComponent,HealthComponent);
 			}
 		}
+		SceneCaptureComponent2D->ShowOnlyActorComponents(this);
 	}
 
 }
