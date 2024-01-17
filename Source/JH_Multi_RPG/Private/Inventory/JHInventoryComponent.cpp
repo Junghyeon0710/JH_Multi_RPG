@@ -9,6 +9,7 @@
 #include "Item/MasterItem.h"
 #include "Item/DataTable/ItemDataTable.h"
 #include "Kismet/KismetArrayLibrary.h"
+#include "Interfaces/InventoryInterface.h"
 
 UJHInventoryComponent::UJHInventoryComponent()
 {
@@ -239,6 +240,27 @@ bool UJHInventoryComponent::IsLocalPlayerController()
 	}
 
 	return false;
+}
+
+void UJHInventoryComponent::PotionDecrease(const int32& Index)
+{
+	--InventoryItem.Potion[Index].Quantiy;
+}
+
+void UJHInventoryComponent::EquipSword(UStaticMesh* SwordMesh)
+{
+	if (GetOwner()->Implements<UInventoryInterface>())
+	{
+		IInventoryInterface::Execute_SetSword(GetOwner(),SwordMesh);
+	}
+}
+
+void UJHInventoryComponent::EquipShield(UStaticMesh* ShieldMesh)
+{
+	if (GetOwner()->Implements<UInventoryInterface>())
+	{
+		IInventoryInterface::Execute_SetShield(GetOwner(), ShieldMesh);
+	}
 }
 
 

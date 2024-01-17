@@ -60,6 +60,11 @@ public:
 
 	bool IsLocalPlayerController();
 
+	void PotionDecrease(const int32& Index);
+
+	void EquipSword(UStaticMesh* SwordMesh);
+	void EquipShield(UStaticMesh* ShieldMesh);
+
 	FOnGoldChanged OnGoldChanged;
 	FOnInventoryItemAdd OnInventoryItemAdd;
 	FOnTraceItemInfo OnTraceItemInfo;
@@ -114,6 +119,6 @@ private:
 public:
 
 	FORCEINLINE int32 GetGold() const { return Gold; }
-	FORCEINLINE const FInventoryItem& GetInventoryItem() const { return InventoryItem; }
+	FORCEINLINE FInventoryItem& GetInventoryItem() { return InventoryItem; }
 	
 };

@@ -114,6 +114,8 @@ public:
 
 	virtual void AddItem_Implementation(AMasterItem* Item) override;
 	virtual void AddGold_Implementation(AMasterItem* Item) override;
+	virtual void SetSword_Implementation(UStaticMesh* SwordMesh) override;
+	void SetShield_Implementation(UStaticMesh* ShieldMesh) override;
 
 	/** /InventoryInterface*/
 
@@ -182,7 +184,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USceneCaptureComponent2D> SceneCaptureComponent2D;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UStaticMeshComponent> Sword;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UStaticMeshComponent> Shield;
 
 public:
 	/** Returns CameraBoom subobject **/

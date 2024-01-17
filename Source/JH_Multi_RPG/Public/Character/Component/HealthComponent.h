@@ -8,6 +8,8 @@
 
 class AJhCharacter;
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHeatlhChanged, float /* Health*/);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class JH_MULTI_RPG_API UHealthComponent : public UActorComponent
 {
@@ -22,6 +24,8 @@ public:
 
 	void IncreaseHealth(float AddHealth);
 	void DecreaseHealth(float MinusHealth);
+
+	FOnHeatlhChanged OnHeatlhChanged;
 protected:
 
 	virtual void BeginPlay() override;

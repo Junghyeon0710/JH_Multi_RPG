@@ -63,6 +63,12 @@ AJHCharacter::AJHCharacter()
 	SceneCaptureComponent2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComponent2D"));
 	SceneCaptureComponent2D->SetupAttachment(RootComponent);
 
+	Sword = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sword"));
+	Sword->SetupAttachment(GetMesh(), "Right_WeaponSocket");
+
+	Shield = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shield"));
+	Shield->SetupAttachment(GetMesh(), "Left_ShieldSocket");
+
 }
 
 void AJHCharacter::Tick(float DeltaTime)
@@ -89,6 +95,16 @@ void AJHCharacter::AddGold_Implementation(AMasterItem* Item)
 		Item->Destroy();
 	}
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%d"), Gold));
+}
+
+void AJHCharacter::SetSword_Implementation(UStaticMesh* SwordMesh)
+{
+	Sword->SetStaticMesh(SwordMesh);
+}
+
+void AJHCharacter::SetShield_Implementation(UStaticMesh* ShieldMesh)
+{
+	Shield->SetStaticMesh(ShieldMesh);
 }
 
 void AJHCharacter::BeginPlay()

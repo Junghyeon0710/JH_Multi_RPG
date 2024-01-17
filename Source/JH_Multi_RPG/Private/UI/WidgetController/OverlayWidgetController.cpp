@@ -5,6 +5,7 @@
 #include "Skill/SkillComponent.h"
 #include "Skill/SkillInfo.h"
 #include "Inventory/JHInventoryComponent.h"
+#include "Character/Component/HealthComponent.h"
 
 void UOverlayWidgetController::BindCallbacksToFunctions()
 {
@@ -18,6 +19,13 @@ void UOverlayWidgetController::BindCallbacksToFunctions()
 		[this](const FSlotDataTable& Item)
 		{
 			TraceItemInfoSignature.Broadcast(Item);
+		}
+	);
+
+	HealthComponent->OnHeatlhChanged.AddLambda(
+		[this](float Health)
+		{
+			HealthChangedSignature.Broadcast(Health);
 		}
 	);
 }

@@ -11,6 +11,7 @@ struct  FSlotDataTable;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSkillInfoSignature, const FJHSkillInfo&, SkillInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTraceItemInfoSignature, const FSlotDataTable&, Item);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChangedSignature, float, Health);
 
 
 /**
@@ -28,6 +29,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "ItemInfo")
 	FTraceItemInfoSignature TraceItemInfoSignature;
+
+	UPROPERTY(BlueprintAssignable, Category = "Health")
+	FHealthChangedSignature HealthChangedSignature;
 
 	//UFUNCTION(BlueprintCallable)
 	//FSlotDataTable GetItemDataTable();

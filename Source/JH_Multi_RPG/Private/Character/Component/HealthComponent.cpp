@@ -19,11 +19,21 @@ void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 void UHealthComponent::IncreaseHealth(float AddHealth)
 {
 	Health += AddHealth;
+	if (Health > MaxHealth)
+	{
+		Health = MaxHealth;
+	}
+	OnHeatlhChanged.Broadcast(Health);
 }
 
 void UHealthComponent::DecreaseHealth(float MinusHealth)
 {
 	Health -= MinusHealth;
+	if (OnHeatlhChanged.IsBound())
+	{
+		OnHeatlhChanged.Broadcast(Health);
+	}
+
 }
 
 void UHealthComponent::BeginPlay()
@@ -34,6 +44,10 @@ void UHealthComponent::BeginPlay()
 
 void UHealthComponent::OnRep_Health(float OldHealth)
 {
+	if (OnHeatlhChanged.IsBound())
+	{
+		OnHeatlhChanged.Broadcast(Health);
+	}
 }
 
 void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

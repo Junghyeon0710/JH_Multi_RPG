@@ -30,4 +30,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void AddGold(AMasterItem* Item);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SetSword(UStaticMesh* SwordMesh);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SetShield(UStaticMesh* ShieldMesh);
 };

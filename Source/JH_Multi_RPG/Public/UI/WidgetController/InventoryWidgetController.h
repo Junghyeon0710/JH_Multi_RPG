@@ -31,6 +31,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	const FInventoryItem& GetOwnerInventoryItem() const;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateItemsInIventoryUI(const TArray<FSlotDataTable>& Item);
+	UFUNCTION(Server,Reliable,BlueprintCallable)
+	void SeverUsePotion(const FSlotDataTable& Item, const int& Index);
 };
