@@ -13,6 +13,10 @@ class USphereComponent;
 USTRUCT(BlueprintType)
 struct FSlotDataTable
 {
+	FSlotDataTable() {}
+	FSlotDataTable(EItemType Type) :
+	ItemType(Type) {}
+
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -58,6 +62,6 @@ protected:
 
 public:
 	const FSlotDataTable& GetItemDataTable() const { return ItemDataTable; }
-
+	void SetItemDataTable(const FSlotDataTable& Data) { ItemDataTable = Data; }
 };
  

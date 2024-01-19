@@ -115,7 +115,7 @@ public:
 	virtual void AddItem_Implementation(AMasterItem* Item) override;
 	virtual void AddGold_Implementation(AMasterItem* Item) override;
 	virtual void SetSword_Implementation(UStaticMesh* SwordMesh) override;
-	void SetShield_Implementation(UStaticMesh* ShieldMesh) override;
+	virtual void SetShield_Implementation(UStaticMesh* ShieldMesh) override;
 
 	/** /InventoryInterface*/
 

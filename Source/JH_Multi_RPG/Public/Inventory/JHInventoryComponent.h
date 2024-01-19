@@ -30,7 +30,7 @@ struct FInventoryItem
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, int32 /* Gold*/);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInventoryItemAdd, const FInventoryItem& Item);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnTraceItemInfo, const FSlotDataTable& Item);
-
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdateItemInventoryUI, const FInventoryItem& Item);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class JH_MULTI_RPG_API UJHInventoryComponent : public UActorComponent
@@ -60,14 +60,25 @@ public:
 
 	bool IsLocalPlayerController();
 
+	UFUNCTION(Server, Reliable)
 	void PotionDecrease(const int32& Index);
+	UFUNCTION(Server, Reliable)
+	void ServerSwordDecrease(const int32& Index);
+	UFUNCTION(Server, Reliable)
+	void ServerShieldDecrease(const int32& Index);
 
-	void EquipSword(UStaticMesh* SwordMesh);
-	void EquipShield(UStaticMesh* ShieldMesh);
+	UFUNCTION(Server, Reliable)
+	void ServerEquipSword(UStaticMesh* SwordMesh,const FSlotDataTable& Item, const int32& Index);
+	UFUNCTION(Server, Reliable)
+	void ServerEquipShield(UStaticMesh* ShieldMesh, const FSlotDataTable& Item, const int32& Index);
+
+	UFUNCTION(Server, Reliable)
+	void ServerDropInventoryItem(const FSlotDataTable& DataTable, const int32& Index);
 
 	FOnGoldChanged OnGoldChanged;
 	FOnInventoryItemAdd OnInventoryItemAdd;
 	FOnTraceItemInfo OnTraceItemInfo;
+	FOnUpdateItemInventoryUI OnUpdateItemInventoryUI;
 protected:
 	virtual void BeginPlay() override;
 
@@ -89,15 +100,40 @@ protected:
 	UFUNCTION()
 	void OnRep_Gold(int32 OldGold);
 
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_InventoryItem, BlueprintReadOnly)
 	FInventoryItem InventoryItem;
+	
+	UFUNCTION()
+	void OnRep_InventoryItem();
+
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EquipedSword, Category = "Equip")
+	TArray<FSlotDataTable> EquipedSword;
+
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EquipedSword, Category = "Equip")
+	TArray<FSlotDataTable> EquipedShield;
+
+	UFUNCTION()
+	void OnRep_EquipedSword();
+
+	UFUNCTION()
+	void OnRep_EquipedShield();
+
+	UPROPERTY(ReplicatedUsing = OnRep_EquippedSwordIndex, VisibleAnywhere, Category = "Count")
+	int32 EquippedSwordIndex = -1;
+
+	UPROPERTY(ReplicatedUsing =OnRep_EquippedShieldIndex, VisibleAnywhere, Category = "Count")
+	int32 EquippedShieldIndex = -1;
+
+	UFUNCTION()
+	void OnRep_EquippedSwordIndex();
+
+	UFUNCTION()
+	void OnRep_EquippedShieldIndex();
 
 private:
 
 	bool bIsInventoryOpen = true;
 	
-
-
 	UPROPERTY(EditAnywhere,Category="Size")
 	int32 SwordSize = 10;
 
@@ -116,9 +152,20 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Count")
 	int32 PotionCount = 0;
 
+
+
+	UPROPERTY(EditAnywhere, Category = "Spawn Actor")
+	TSubclassOf<AMasterItem> MasterItemClass;
+
 public:
 
 	FORCEINLINE int32 GetGold() const { return Gold; }
 	FORCEINLINE FInventoryItem& GetInventoryItem() { return InventoryItem; }
-	
+	FORCEINLINE const TArray<FSlotDataTable>& GetEquipedSword() const { return EquipedSword; }
+	FORCEINLINE const TArray<FSlotDataTable>& GetEquipedShield() const { return EquipedShield; }
+	FORCEINLINE int32 GetEquippedSwordIndex() const { return EquippedSwordIndex; }
+	FORCEINLINE int32 GetEquippedShieldIndex() const { return EquippedShieldIndex; }
+	FORCEINLINE void SetEquippedSwordIndex(int32 Index) { EquippedSwordIndex = Index; }
+	FORCEINLINE void SetEquippedShieldIndex(int32 Index) { EquippedShieldIndex = Index; }
+	void OnUpdateItemInventoryUIBroadcast();
 };

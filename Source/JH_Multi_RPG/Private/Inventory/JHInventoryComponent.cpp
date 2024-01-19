@@ -21,7 +21,56 @@ void UJHInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UJHInventoryComponent, Gold);
-	DOREPLIFETIME_CONDITION(UJHInventoryComponent, InventoryItem,COND_OwnerOnly);
+	DOREPLIFETIME(UJHInventoryComponent, InventoryItem);
+	DOREPLIFETIME(UJHInventoryComponent, EquipedSword);
+	DOREPLIFETIME(UJHInventoryComponent, EquipedShield);
+	DOREPLIFETIME(UJHInventoryComponent, EquippedSwordIndex);
+	DOREPLIFETIME(UJHInventoryComponent, EquippedShieldIndex);
+}
+
+void UJHInventoryComponent::ServerDropInventoryItem_Implementation(const FSlotDataTable& DataTable, const int32& Index)
+{
+	switch (DataTable.ItemType)
+	{
+	case EItemType::EIT_Sword:
+
+		if (Index == EquippedSwordIndex && InventoryItem.Swords[Index].ItemId.RowName == DataTable.ItemId.RowName)
+		{
+			return;
+		}
+		SwordCount--;
+		InventoryItem.Swords[Index] = FSlotDataTable(EItemType::EIT_Sword);
+		OnUpdateItemInventoryUIBroadcast();
+
+		break;
+	case EItemType::EIT_Shield:
+
+		if (Index == EquippedShieldIndex && InventoryItem.Shields[Index].ItemId.RowName == DataTable.ItemId.RowName)
+		{
+			return;
+		}
+		InventoryItem.Shields[Index] = FSlotDataTable(EItemType::EIT_Shield);
+		OnUpdateItemInventoryUIBroadcast();
+
+		break;
+	case EItemType::EIT_Potion:
+		InventoryItem.Potion[Index] = FSlotDataTable(EItemType::EIT_Potion);
+		if (OnUpdateItemInventoryUI.IsBound())
+		{
+			OnUpdateItemInventoryUI.Broadcast(InventoryItem);
+			PotionCount--;
+		}
+		break;
+	default:
+		break;
+	}
+
+	FActorSpawnParameters Parms;
+	Parms.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	AMasterItem* Item = GetWorld()->SpawnActor<AMasterItem>(MasterItemClass, GetOwner()->GetTransform());
+	Item->SetItemDataTable(DataTable);
+	FItemDataTable* ItemDatatable = Item->GetItemDataTable().ItemId.DataTable->FindRow<FItemDataTable>(Item->GetItemDataTable().ItemId.RowName, TEXT(""));
+	Item->ItemMesh->SetStaticMesh(ItemDatatable->Mesh);
 }
 
 void UJHInventoryComponent::BeginPlay()
@@ -33,17 +82,15 @@ void UJHInventoryComponent::BeginPlay()
 		IenterWidget = CreateWidget<UJHUserWidget>(GetWorld(), IenterWidgetClass);
 		JhInventoryWidget = CreateWidget<UJHUserWidget>(GetWorld(), JhUserWidgetClass);
 	}
-	
+
 	if (GetOwner() && GetOwner()->HasAuthority())
 	{
-		
 		StartInventorySlot(InventoryItem.Swords, SwordSize);
 		StartInventorySlot(InventoryItem.Shields, ShieldSize);
 		StartInventorySlot(InventoryItem.Potion, PotionSize);
-
 	}
-
 }
+
 void UJHInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -54,18 +101,18 @@ void UJHInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 		bool bFoundItem;
 		TraceItemToPickUp(TraceItemDataTable, bFoundItem);
 		if (IenterWidget && bFoundItem)
-		{	
+		{
 			if (OnTraceItemInfo.IsBound())
 			{
 				OnTraceItemInfo.Broadcast(TraceItemDataTable);
 			}
 			IenterWidget->AddToViewport();
-	
+
 		}
-		else if(IenterWidget)
+		else if (IenterWidget)
 		{
 			IenterWidget->RemoveFromParent();
-			
+
 		}
 	}
 }
@@ -186,6 +233,31 @@ void UJHInventoryComponent::OnRep_Gold(int32 OldGold)
 	}
 }
 
+void UJHInventoryComponent::OnRep_InventoryItem()
+{
+	OnUpdateItemInventoryUIBroadcast();
+}
+
+void UJHInventoryComponent::OnRep_EquipedSword()
+{
+	OnUpdateItemInventoryUIBroadcast();
+}
+
+void UJHInventoryComponent::OnRep_EquipedShield()
+{
+	OnUpdateItemInventoryUIBroadcast();
+}
+
+void UJHInventoryComponent::OnRep_EquippedSwordIndex()
+{
+	OnUpdateItemInventoryUIBroadcast();
+}
+
+void UJHInventoryComponent::OnRep_EquippedShieldIndex()
+{
+	OnUpdateItemInventoryUIBroadcast();
+}
+
 bool UJHInventoryComponent::AddItemToInventory(const FSlotDataTable& DataTable, TArray<FSlotDataTable>& InventoryItems, int32& Count)
 {
 	for (auto& Item : InventoryItems)
@@ -205,14 +277,18 @@ bool UJHInventoryComponent::AddItemToInventory(const FSlotDataTable& DataTable, 
 		}
 	}
 	// 똑같은 아이템이 없고 인벤토리칸보다 적게 있으면 추가
-	if (Count <= InventoryItems.Num() && InventoryItems[Count].Quantiy == 0)
-	{		
-		InventoryItems[Count].ItemId = DataTable.ItemId;
-		InventoryItems[Count].ItemType = DataTable.ItemType;
-		InventoryItems[Count].Quantiy = DataTable.Quantiy;		
-		Count++;
-		ClientAddtoInventory(InventoryItem);
-		return true;
+	if (Count <= InventoryItems.Num())
+	{
+		for (auto& Item : InventoryItems)
+		{
+			if (Item.Quantiy == 0)
+			{
+				Item = DataTable;
+				Count++;
+				ClientAddtoInventory(InventoryItem);
+				return true;
+			}
+		}
 	}
 	return false;
 }
@@ -242,26 +318,66 @@ bool UJHInventoryComponent::IsLocalPlayerController()
 	return false;
 }
 
-void UJHInventoryComponent::PotionDecrease(const int32& Index)
+void UJHInventoryComponent::ServerShieldDecrease_Implementation(const int32& Index)
 {
-	--InventoryItem.Potion[Index].Quantiy;
+	--InventoryItem.Shields[Index].Quantiy;
+	OnUpdateItemInventoryUIBroadcast();
 }
 
-void UJHInventoryComponent::EquipSword(UStaticMesh* SwordMesh)
+void UJHInventoryComponent::PotionDecrease_Implementation(const int32& Index)
+{
+	--InventoryItem.Potion[Index].Quantiy;
+	OnUpdateItemInventoryUIBroadcast();
+}
+
+void UJHInventoryComponent::ServerSwordDecrease_Implementation(const int32& Index)
+{
+	--InventoryItem.Swords[Index].Quantiy;
+	OnUpdateItemInventoryUIBroadcast();
+}
+
+void UJHInventoryComponent::ServerEquipSword_Implementation(UStaticMesh* SwordMesh, const FSlotDataTable& Item, const int32& Index)
 {
 	if (GetOwner()->Implements<UInventoryInterface>())
 	{
-		IInventoryInterface::Execute_SetSword(GetOwner(),SwordMesh);
+		IInventoryInterface::Execute_SetSword(GetOwner(), SwordMesh);
+
+		if (EquipedSword.Num() == 0)
+		{
+			EquipedSword.Add(Item);
+			EquippedSwordIndex = Index;
+			OnUpdateItemInventoryUIBroadcast();
+			return;
+		}
+		EquipedSword[0] = Item;
+		EquippedSwordIndex = Index;
+		OnUpdateItemInventoryUIBroadcast();
 	}
 }
 
-void UJHInventoryComponent::EquipShield(UStaticMesh* ShieldMesh)
+void UJHInventoryComponent::ServerEquipShield_Implementation(UStaticMesh* ShieldMesh, const FSlotDataTable& Item, const int32& Index)
 {
 	if (GetOwner()->Implements<UInventoryInterface>())
 	{
 		IInventoryInterface::Execute_SetShield(GetOwner(), ShieldMesh);
+
+		if (EquipedShield.Num() == 0)
+		{
+			EquipedShield.Add(Item);
+			EquippedShieldIndex = Index;
+			OnUpdateItemInventoryUIBroadcast();
+			return;
+		}
+		EquipedShield[0] = Item;
+		EquippedShieldIndex = Index;
+		OnUpdateItemInventoryUIBroadcast();
 	}
 }
 
-
-
+void UJHInventoryComponent::OnUpdateItemInventoryUIBroadcast()
+{
+	if (OnUpdateItemInventoryUI.IsBound())
+	{
+		OnUpdateItemInventoryUI.Broadcast(InventoryItem);
+	}
+}

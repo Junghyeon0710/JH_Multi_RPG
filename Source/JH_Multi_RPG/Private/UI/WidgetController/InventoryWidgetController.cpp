@@ -21,6 +21,13 @@ void UInventoryWidgetController::BindCallbacksToFunctions()
 			OnInventoryItemAddSignature.Broadcast(Item);
 		}
 	);
+
+	InventoryComponent->OnUpdateItemInventoryUI.AddLambda(
+		[this](const FInventoryItem& Item)
+		{
+			OnUpdateInventoryUISignature.Broadcast(Item);
+		}
+	);
 }
 
 const FInventoryItem& UInventoryWidgetController::GetOwnerInventoryItem() const
@@ -28,19 +35,68 @@ const FInventoryItem& UInventoryWidgetController::GetOwnerInventoryItem() const
 	return InventoryComponent->GetInventoryItem();
 }
 
-void UInventoryWidgetController::SeverUsePotion_Implementation(const FSlotDataTable& Item, const int& Index)
+void UInventoryWidgetController::UsePotion(const FSlotDataTable& Item, const int& Index)
 {
-	const FString DataTablePath = TEXT("/Script/Engine.DataTable'/Game/Blueprints/Inventory/Items/DataTable/DT_ItemDataTable.DT_ItemDataTable'");
-	UDataTable* ItemDataTableObject = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
-	if (ItemDataTableObject)
+	if (LoadItemDataTable())
 	{
-		FItemDataTable* PotionItem = ItemDataTableObject->FindRow<FItemDataTable>(Item.ItemId.RowName, TEXT(""));
+		FItemDataTable* PotionItem = LoadItemDataTable()->FindRow<FItemDataTable>(Item.ItemId.RowName, TEXT(""));
 		HealthComponent->IncreaseHealth(PotionItem->Power);
 		InventoryComponent->PotionDecrease(Index);
 	}
-	// Item.ItemId.RowName
 }
 
+void UInventoryWidgetController::EquipWeapon(const FSlotDataTable& Item, const int& Index, bool& IsEquipped)
+{
+	if (LoadItemDataTable())
+	{
+		FItemDataTable* WeaponItem = LoadItemDataTable()->FindRow<FItemDataTable>(Item.ItemId.RowName, TEXT(""));
 
+		if (Item.ItemType == EItemType::EIT_Sword)
+		{
+			IsEquipped = true;
+			InventoryComponent->ServerEquipSword(WeaponItem->Mesh,Item,Index);
+		
+			return;
+		}
+		else
+		{
+			IsEquipped = true;
+			InventoryComponent->ServerEquipShield(WeaponItem->Mesh,Item,Index);
+			return;
+		}
+	}
+	IsEquipped = false;
+}
 
+void UInventoryWidgetController::DropItem(const FSlotDataTable& Item, const int& Index)
+{
+	InventoryComponent->ServerDropInventoryItem(Item, Index);
+}
+
+UDataTable* UInventoryWidgetController::LoadItemDataTable()
+{
+	const FString DataTablePath = TEXT("/Script/Engine.DataTable'/Game/Blueprints/Inventory/Items/DataTable/DT_ItemDataTable.DT_ItemDataTable'");
+	UDataTable* ItemDataTableObject = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
+	return ItemDataTableObject;
+}
+
+const TArray<FSlotDataTable>& UInventoryWidgetController::GetOwnerEquipSword() const
+{
+	return InventoryComponent->GetEquipedSword();
+}
+
+const TArray<FSlotDataTable>& UInventoryWidgetController::GetOwnerEquipShield() const
+{
+	return InventoryComponent->GetEquipedShield();
+}
+
+const int32 UInventoryWidgetController::GetOwnerEquipSwordIndex() const
+{
+	return InventoryComponent->GetEquippedSwordIndex();
+}
+
+const int32 UInventoryWidgetController::GetOwnerEquipShiledIndex() const
+{
+	return InventoryComponent->GetEquippedShieldIndex();
+}
 

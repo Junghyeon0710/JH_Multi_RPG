@@ -19,6 +19,7 @@ AMasterItem::AMasterItem()
 	ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	ItemMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	ItemMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	ItemMesh->SetIsReplicated(true);
 }
 
 void AMasterItem::BeginPlay()
@@ -27,7 +28,7 @@ void AMasterItem::BeginPlay()
 
 	if (HasAuthority())
 	{
-		ItemSphere->OnComponentBeginOverlap.AddDynamic(this, &AMasterItem::OnOverlapBegin);
+		ItemSphere->OnComponentBeginOverlap.AddDynamic(this, &AMasterItem::OnOverlapBegin);		
 	}
 }
 
@@ -46,7 +47,6 @@ void AMasterItem::OnConstruction(const FTransform& Transform)
 		if(SlotDatatable)
 		{
 			ItemMesh->SetStaticMesh(SlotDatatable->Mesh);
-
 		}
 	}
 }

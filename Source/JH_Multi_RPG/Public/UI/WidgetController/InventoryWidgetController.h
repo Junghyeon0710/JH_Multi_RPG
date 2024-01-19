@@ -11,6 +11,7 @@ struct FSlotDataTable;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChangeSignature, int32, NewGold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryItemAddSignature, const FInventoryItem&, Item);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateInventoryUISignature, const FInventoryItem&, Item);
 
 /**
  * 
@@ -28,9 +29,33 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Item")
 	FOnInventoryItemAddSignature OnInventoryItemAddSignature;
 
+	UPROPERTY(BlueprintAssignable, Category = "Item")
+	FOnUpdateInventoryUISignature OnUpdateInventoryUISignature;
+
 	UFUNCTION(BlueprintPure)
 	const FInventoryItem& GetOwnerInventoryItem() const;
 
-	UFUNCTION(Server,Reliable,BlueprintCallable)
-	void SeverUsePotion(const FSlotDataTable& Item, const int& Index);
+	UFUNCTION(BlueprintCallable)
+	void UsePotion(const FSlotDataTable& Item, const int& Index);
+
+	UFUNCTION(BlueprintCallable)
+	void EquipWeapon(const FSlotDataTable& Item, const int& Index,bool& IsEquipped);
+
+	UFUNCTION(BlueprintCallable)
+	void DropItem(const FSlotDataTable& Item, const int& Index);
+
+	UDataTable* LoadItemDataTable();
+
+	UFUNCTION(BlueprintPure)
+	const TArray<FSlotDataTable>& GetOwnerEquipSword() const;
+
+	UFUNCTION(BlueprintPure)
+	const TArray<FSlotDataTable>& GetOwnerEquipShield() const;
+
+public:
+	UFUNCTION(BlueprintPure)
+	const int32 GetOwnerEquipSwordIndex() const;
+	UFUNCTION(BlueprintPure)
+	const int32 GetOwnerEquipShiledIndex() const;
+
 };

@@ -60,14 +60,19 @@ AJHCharacter::AJHCharacter()
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("JHHealthComponent"));
 	HealthComponent->SetIsReplicated(true);
 
+
 	SceneCaptureComponent2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComponent2D"));
 	SceneCaptureComponent2D->SetupAttachment(RootComponent);
+	SceneCaptureComponent2D->bCaptureEveryFrame = false;
+	
 
 	Sword = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sword"));
 	Sword->SetupAttachment(GetMesh(), "Right_WeaponSocket");
+	Sword->SetIsReplicated(true);
 
 	Shield = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shield"));
 	Shield->SetupAttachment(GetMesh(), "Left_ShieldSocket");
+	Shield->SetIsReplicated(true);
 
 }
 
@@ -100,11 +105,13 @@ void AJHCharacter::AddGold_Implementation(AMasterItem* Item)
 void AJHCharacter::SetSword_Implementation(UStaticMesh* SwordMesh)
 {
 	Sword->SetStaticMesh(SwordMesh);
+	SceneCaptureComponent2D->CaptureScene();
 }
 
 void AJHCharacter::SetShield_Implementation(UStaticMesh* ShieldMesh)
 {
 	Shield->SetStaticMesh(ShieldMesh);
+	SceneCaptureComponent2D->CaptureScene();
 }
 
 void AJHCharacter::BeginPlay()
@@ -280,6 +287,7 @@ void AJHCharacter::InventoryKeyPress()
 	if (JHInventoryComponent)
 	{
 		JHInventoryComponent->PressInventoryKey();
+		SceneCaptureComponent2D->CaptureScene();
 	}
 }
 
