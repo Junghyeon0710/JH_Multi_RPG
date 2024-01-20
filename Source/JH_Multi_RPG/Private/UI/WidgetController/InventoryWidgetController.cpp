@@ -35,6 +35,11 @@ const FInventoryItem& UInventoryWidgetController::GetOwnerInventoryItem() const
 	return InventoryComponent->GetInventoryItem();
 }
 
+void UInventoryWidgetController::SetOwnerInventoryItem(const FSlotDataTable& Item, const int32& Index)
+{
+	InventoryComponent->GetInventoryItem().Swords[Index] = Item;
+}
+
 void UInventoryWidgetController::UsePotion(const FSlotDataTable& Item, const int& Index)
 {
 	if (LoadItemDataTable())
@@ -88,6 +93,11 @@ const TArray<FSlotDataTable>& UInventoryWidgetController::GetOwnerEquipSword() c
 const TArray<FSlotDataTable>& UInventoryWidgetController::GetOwnerEquipShield() const
 {
 	return InventoryComponent->GetEquipedShield();
+}
+
+void UInventoryWidgetController::OnDropEvent(const FSlotDataTable& SourceItem, const FSlotDataTable& TargetItem, const int32& SourceIndex, const int32& TargetIndex)
+{
+	InventoryComponent->ServerOnDropEvent(SourceItem, TargetItem, SourceIndex, TargetIndex);
 }
 
 const int32 UInventoryWidgetController::GetOwnerEquipSwordIndex() const

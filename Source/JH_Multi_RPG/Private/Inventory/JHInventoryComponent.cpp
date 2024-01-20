@@ -73,6 +73,56 @@ void UJHInventoryComponent::ServerDropInventoryItem_Implementation(const FSlotDa
 	Item->ItemMesh->SetStaticMesh(ItemDatatable->Mesh);
 }
 
+void UJHInventoryComponent::ServerOnDropEvent_Implementation(const FSlotDataTable& SourceItem, const FSlotDataTable& TargetItem, const int32& SourceIndex, const int32& TargetIndex)
+{
+	switch (SourceItem.ItemType)
+	{
+	case EItemType::EIT_Sword:
+		SwapDraggedItems(InventoryItem.Swords,
+			SourceItem,
+			TargetItem,
+			SourceIndex,
+			TargetIndex,EquippedSwordIndex);
+		break;
+	case EItemType::EIT_Shield:
+		SwapDraggedItems(InventoryItem.Shields,
+			SourceItem,
+			TargetItem,
+			SourceIndex,
+			TargetIndex,EquippedShieldIndex);
+		break;
+	case EItemType::EIT_Potion:
+		SwapDraggedItems(InventoryItem.Potion,
+			SourceItem,
+			TargetItem,
+			SourceIndex,
+			TargetIndex);
+		break;
+	default:
+		break;
+	}
+	OnUpdateItemInventoryUIBroadcast();
+}
+
+void UJHInventoryComponent::SwapDraggedItems(TArray<FSlotDataTable>& MyItem, const FSlotDataTable& SourceItem, const FSlotDataTable& TargetItem, const int32& SourceIndex, const int32& TargetIndex,const int32& EquippedIndex)
+{
+	if (SourceIndex == EquippedIndex) return;
+	else if (SourceItem.ItemId.RowName == TargetItem.ItemId.RowName)
+	{
+		return;
+	}
+	else if (SourceItem.ItemId.RowName != TargetItem.ItemId.RowName && TargetItem.Quantiy == 0)
+	{
+		MyItem[TargetIndex] = SourceItem;
+		MyItem[SourceIndex] = TargetItem;
+	}
+	else if (SourceItem.ItemId.RowName != TargetItem.ItemId.RowName && TargetItem.Quantiy > 0)
+	{
+		MyItem[SourceIndex] = TargetItem;
+		MyItem[TargetIndex] = SourceItem;
+	}
+}
+
 void UJHInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();

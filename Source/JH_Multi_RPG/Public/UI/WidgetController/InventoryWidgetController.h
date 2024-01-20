@@ -36,6 +36,9 @@ public:
 	const FInventoryItem& GetOwnerInventoryItem() const;
 
 	UFUNCTION(BlueprintCallable)
+	void SetOwnerInventoryItem(const FSlotDataTable& Item,const int32& Index);
+
+	UFUNCTION(BlueprintCallable)
 	void UsePotion(const FSlotDataTable& Item, const int& Index);
 
 	UFUNCTION(BlueprintCallable)
@@ -52,6 +55,10 @@ public:
 	UFUNCTION(BlueprintPure)
 	const TArray<FSlotDataTable>& GetOwnerEquipShield() const;
 
+	UFUNCTION(BlueprintCallable)
+	void OnDropEvent(const FSlotDataTable& SourceItem, const FSlotDataTable& TargetItem, const int32& SourceIndex, const int32& TargetIndex);
+
+	
 public:
 	UFUNCTION(BlueprintPure)
 	const int32 GetOwnerEquipSwordIndex() const;
