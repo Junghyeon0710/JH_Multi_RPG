@@ -3,7 +3,6 @@
 
 #include "UI/JHHUD.h"
 #include "UI/Widget/JHUserWidget.h"
-#include "UI/WidgetController/OverlayWidgetController.h"
 #include "UI/WidgetController/JHWidgetController.h"
 #include "UI/WidgetController/InventoryWidgetController.h"
 

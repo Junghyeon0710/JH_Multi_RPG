@@ -24,7 +24,6 @@ class JH_MULTI_RPG_API AJHHUD : public AHUD
 	GENERATED_BODY()
 
 public:
-	//virtual void Tick(FGeometry MyGeometry, float InDeleaTIme) override;
 	void InitOverlay(USkillComponent* SC, UJHInventoryComponent* IC, UHealthComponent* HC);
 
 	UFUNCTION(BlueprintCallable)
