@@ -6,10 +6,10 @@
 
 void UStoreWidgetController::BindCallbacksToFunctions()
 {
-	InventoryComponent->OnGoldChanged.AddLambda(
-		[this](int32 NewGold)
+	InventoryComponent->OnStoreGoldChanged.AddLambda(
+		[this](int32 NewGold,bool bCanBuy)
 		{
-			OnGoldChangeSignature.Broadcast(NewGold);
+			OnGoldChangeSignature.Broadcast(NewGold, bCanBuy);
 		}
 	);
 }

@@ -27,7 +27,7 @@ struct FInventoryItem
 
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, int32 /* Gold*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGoldChanged, int32 /* Gold*/,bool bCanBuy /*CanBuy? */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInventoryItemAdd, const FInventoryItem& Item);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnTraceItemInfo, const FSlotDataTable& Item);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdateItemInventoryUI, const FInventoryItem& Item);
@@ -82,7 +82,7 @@ public:
 	void ServerBuyItem(const FSlotDataTable& Item);
 	
 	void SwapDraggedItems(TArray<FSlotDataTable>& MyItem, const FSlotDataTable& SourceItem, const FSlotDataTable& TargetItem, const int32& SourceIndex, const int32& TargetIndex, const int32& EquippedIndex = -1);
-	FOnGoldChanged OnGoldChanged;
+	FOnGoldChanged OnStoreGoldChanged;
 	FOnInventoryItemAdd OnInventoryItemAdd;
 	FOnTraceItemInfo OnTraceItemInfo;
 	FOnUpdateItemInventoryUI OnUpdateItemInventoryUI;
@@ -137,6 +137,9 @@ protected:
 	UFUNCTION()
 	void OnRep_EquippedShieldIndex();
 
+	UPROPERTY(EditAnywhere, Replicated)
+	bool bCanBuy;
+
 private:
 
 	bool bIsInventoryOpen = true;
@@ -158,9 +161,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Count")
 	int32 PotionCount = 0;
-
-	
-	bool bCanBuy;
 
 
 	UPROPERTY(EditAnywhere, Category = "Spawn Actor")

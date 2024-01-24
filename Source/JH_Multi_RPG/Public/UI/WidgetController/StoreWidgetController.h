@@ -7,7 +7,7 @@
 #include "StoreWidgetController.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChangeSignature, int32, NewGold);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGoldChangeSignature, int32, NewGold,bool,bCanBuy);
 
 /**
  * 

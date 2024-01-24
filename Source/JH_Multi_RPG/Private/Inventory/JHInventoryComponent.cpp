@@ -26,6 +26,7 @@ void UJHInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	DOREPLIFETIME(UJHInventoryComponent, EquipedShield);
 	DOREPLIFETIME(UJHInventoryComponent, EquippedSwordIndex);
 	DOREPLIFETIME(UJHInventoryComponent, EquippedShieldIndex);
+	DOREPLIFETIME(UJHInventoryComponent, bCanBuy);
 }
 
 void UJHInventoryComponent::ServerDropInventoryItem_Implementation(const FSlotDataTable& DataTable, const int32& Index)
@@ -127,11 +128,18 @@ void UJHInventoryComponent::ServerBuyItem_Implementation(const FSlotDataTable& I
 				break;
 			}
 			Gold -= Price;
-			if (OnGoldChanged.IsBound())
+			bCanBuy = true;
+			if (OnStoreGoldChanged.IsBound())
 			{
-				OnGoldChanged.Broadcast(Gold);
+				OnStoreGoldChanged.Broadcast(Gold, bCanBuy);
+				return;
 			}
 		}
+	}
+	bCanBuy = false;
+	if (OnStoreGoldChanged.IsBound())
+	{
+		OnStoreGoldChanged.Broadcast(Gold, bCanBuy);
 	}
 }
 
@@ -216,10 +224,10 @@ void UJHInventoryComponent::PressInventoryKey()
 void UJHInventoryComponent::AddToGold(int32 AddGold)
 {
 	Gold += AddGold;
-
-	if (OnGoldChanged.IsBound())
+	
+	if (OnStoreGoldChanged.IsBound())
 	{
-		OnGoldChanged.Broadcast(Gold);
+		OnStoreGoldChanged.Broadcast(Gold,false);
 	}
 }
 
@@ -307,9 +315,9 @@ void UJHInventoryComponent::ClientAddtoInventory_Implementation(const FInventory
 
 void UJHInventoryComponent::OnRep_Gold(int32 OldGold)
 {
-	if (OnGoldChanged.IsBound())
+	if (OnStoreGoldChanged.IsBound())
 	{
-		OnGoldChanged.Broadcast(Gold);
+		OnStoreGoldChanged.Broadcast(Gold, bCanBuy);
 	}
 }
 
