@@ -5,29 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Enum/ItemTypes.h"
+#include "DataTable/SlotDataTable.h"
 #include "MasterItem.generated.h"
 
 
 class USphereComponent;
 
-USTRUCT(BlueprintType)
-struct FSlotDataTable
-{
-	FSlotDataTable() {}
-	FSlotDataTable(EItemType Type) :
-	ItemType(Type) {}
-
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FDataTableRowHandle ItemId;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Quantiy = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EItemType ItemType;
-};
 
 UCLASS()
 class JH_MULTI_RPG_API AMasterItem : public AActor
@@ -40,7 +23,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FDataTableRowHandle MoneyDataHandle;
-
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStaticMeshComponent> ItemMesh;

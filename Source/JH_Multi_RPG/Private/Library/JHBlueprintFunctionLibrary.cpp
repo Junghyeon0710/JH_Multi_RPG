@@ -28,3 +28,24 @@ UInventoryWidgetController* UJHBlueprintFunctionLibrary::GetInventoryWidgetContr
     }
     return nullptr;
 }
+
+UStoreWidgetController* UJHBlueprintFunctionLibrary::GetStoreWidgetController(const UObject* WorldContextObject)
+{
+    if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+    {
+        if (AJHHUD* HUD = Cast<AJHHUD>(PlayerController->GetHUD()))
+        {
+            if (ACharacter* Character = UGameplayStatics::GetPlayerCharacter(WorldContextObject, 0))
+            {
+                AJHCharacter* JHCharacter = Cast<AJHCharacter>(Character);
+                FWidgetControllerParms Parms;
+                Parms.SkillComponent = JHCharacter->GetSKillComponent();
+                Parms.InventoryComponent = JHCharacter->GetInventoryComponent();
+                Parms.HealthComponent = JHCharacter->GetHealthComponent();
+
+                return  HUD->GetStoreWidgetController(Parms);
+            }
+        }
+    }
+    return nullptr;
+}

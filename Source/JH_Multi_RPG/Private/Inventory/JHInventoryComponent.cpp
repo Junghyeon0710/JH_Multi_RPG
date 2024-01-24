@@ -82,14 +82,14 @@ void UJHInventoryComponent::ServerOnDropEvent_Implementation(const FSlotDataTabl
 			SourceItem,
 			TargetItem,
 			SourceIndex,
-			TargetIndex,EquippedSwordIndex);
+			TargetIndex, EquippedSwordIndex);
 		break;
 	case EItemType::EIT_Shield:
 		SwapDraggedItems(InventoryItem.Shields,
 			SourceItem,
 			TargetItem,
 			SourceIndex,
-			TargetIndex,EquippedShieldIndex);
+			TargetIndex, EquippedShieldIndex);
 		break;
 	case EItemType::EIT_Potion:
 		SwapDraggedItems(InventoryItem.Potion,
@@ -104,7 +104,38 @@ void UJHInventoryComponent::ServerOnDropEvent_Implementation(const FSlotDataTabl
 	OnUpdateItemInventoryUIBroadcast();
 }
 
-void UJHInventoryComponent::SwapDraggedItems(TArray<FSlotDataTable>& MyItem, const FSlotDataTable& SourceItem, const FSlotDataTable& TargetItem, const int32& SourceIndex, const int32& TargetIndex,const int32& EquippedIndex)
+void UJHInventoryComponent::ServerBuyItem_Implementation(const FSlotDataTable& Item)
+{
+	FItemDataTable* ItemDataTable = Item.ItemId.DataTable->FindRow<FItemDataTable>(Item.ItemId.RowName, TEXT(""));
+	if (ItemDataTable)
+	{
+		float Price = ItemDataTable->BuyPrice * Item.Quantiy;
+		if (Gold >= Price)
+		{
+			switch (Item.ItemType)
+			{
+			case EItemType::EIT_Sword:
+				AddItemToInventory(Item, InventoryItem.Swords, SwordCount);
+				break;
+			case EItemType::EIT_Shield:
+				AddItemToInventory(Item, InventoryItem.Shields, ShieldCount);
+				break;
+			case EItemType::EIT_Potion:
+				AddItemToInventory(Item, InventoryItem.Potion, PotionCount);
+				break;
+			default:
+				break;
+			}
+			Gold -= Price;
+			if (OnGoldChanged.IsBound())
+			{
+				OnGoldChanged.Broadcast(Gold);
+			}
+		}
+	}
+}
+
+void UJHInventoryComponent::SwapDraggedItems(TArray<FSlotDataTable>& MyItem, const FSlotDataTable& SourceItem, const FSlotDataTable& TargetItem, const int32& SourceIndex, const int32& TargetIndex, const int32& EquippedIndex)
 {
 	if (SourceIndex == EquippedIndex) return;
 	else if (SourceItem.ItemId.RowName == TargetItem.ItemId.RowName)
@@ -202,7 +233,6 @@ void UJHInventoryComponent::StartInventorySlot(TArray<FSlotDataTable>& Items, in
 
 void UJHInventoryComponent::TraceItem(FHitResult& HitResult)
 {
-
 	FCollisionQueryParams CollisionParams;
 	FCollisionResponseParams parms;
 

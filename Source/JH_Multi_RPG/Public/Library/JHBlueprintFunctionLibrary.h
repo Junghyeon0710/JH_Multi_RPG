@@ -16,5 +16,8 @@ class JH_MULTI_RPG_API UJHBlueprintFunctionLibrary : public UBlueprintFunctionLi
 
 	UFUNCTION(BlueprintPure,Category= "BluerpintLibrary|Inventory",meta = (DefaultToSelf= "WorldContextObject"))
 	static class UInventoryWidgetController* GetInventoryWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category = "BluerpintLibrary|Store", meta = (DefaultToSelf = "WorldContextObject"))
+	static class UStoreWidgetController* GetStoreWidgetController(const UObject* WorldContextObject);
 	
 };

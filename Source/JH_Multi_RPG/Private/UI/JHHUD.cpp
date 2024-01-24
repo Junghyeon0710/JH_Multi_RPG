@@ -5,6 +5,7 @@
 #include "UI/Widget/JHUserWidget.h"
 #include "UI/WidgetController/JHWidgetController.h"
 #include "UI/WidgetController/InventoryWidgetController.h"
+#include "UI/WidgetController/StoreWidgetController.h"
 
 void AJHHUD::InitOverlay(USkillComponent* SC, UJHInventoryComponent* IC , UHealthComponent* HC)
 {
@@ -30,4 +31,15 @@ UInventoryWidgetController* AJHHUD::GetInventoryWidgetController(const FWidgetCo
 		InventoryWidgetController->BindCallbacksToFunctions();
 	}
 	return InventoryWidgetController;
+}
+
+UStoreWidgetController* AJHHUD::GetStoreWidgetController(const FWidgetControllerParms& Parms)
+{
+	if (StoreWidgetController == nullptr)
+	{
+		StoreWidgetController = NewObject<UStoreWidgetController>(this, StoreWidgetControllerClass);
+		StoreWidgetController->SetWidgetControllerParms(Parms);
+		StoreWidgetController->BindCallbacksToFunctions();
+	}
+	return StoreWidgetController;
 }

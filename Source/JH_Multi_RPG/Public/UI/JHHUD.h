@@ -15,6 +15,8 @@ class UJHInventoryComponent;
 class UInventoryWidgetController;
 struct FWidgetControllerParms;
 class UHealthComponent;
+class UStoreWidgetController;
+
 /**
  * 
  */
@@ -28,6 +30,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UInventoryWidgetController* GetInventoryWidgetController(const FWidgetControllerParms& Parms);
+
+	UFUNCTION(BlueprintCallable)
+	UStoreWidgetController* GetStoreWidgetController(const FWidgetControllerParms& Parms);
 
 private:
 
@@ -49,4 +54,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UInventoryWidgetController> InventoryWidgetControllerClass;
 	 
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = ture))
+	TObjectPtr<UStoreWidgetController> StoreWidgetController;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UStoreWidgetController> StoreWidgetControllerClass;
 };

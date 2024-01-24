@@ -9,7 +9,6 @@
 struct FInventoryItem;
 struct FSlotDataTable;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChangeSignature, int32, NewGold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryItemAddSignature, const FInventoryItem&, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateInventoryUISignature, const FInventoryItem&, Item);
 
@@ -23,9 +22,6 @@ class JH_MULTI_RPG_API UInventoryWidgetController : public UJHWidgetController
 public:
 	virtual void BindCallbacksToFunctions() override;
 	
-	UPROPERTY(BlueprintAssignable,Category="Gold")
-	FOnGoldChangeSignature OnGoldChangeSignature;
-
 	UPROPERTY(BlueprintAssignable, Category = "Item")
 	FOnInventoryItemAddSignature OnInventoryItemAddSignature;
 

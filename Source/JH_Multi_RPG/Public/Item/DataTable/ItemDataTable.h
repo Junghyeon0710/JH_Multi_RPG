@@ -30,6 +30,12 @@ struct FItemDataTable : public FTableRowBase
 	float Power;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float BuyPrice;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float SellPrice;;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UStaticMesh> Mesh;
 };
 

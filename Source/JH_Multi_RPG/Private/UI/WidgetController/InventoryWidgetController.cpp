@@ -9,12 +9,7 @@
 
 void UInventoryWidgetController::BindCallbacksToFunctions()
 {
-	InventoryComponent->OnGoldChanged.AddLambda(
-		[this](int32 NewGold)
-		{
 
-		}
-	);
 	InventoryComponent->OnInventoryItemAdd.AddLambda(
 		[this](const FInventoryItem& Item)
 		{

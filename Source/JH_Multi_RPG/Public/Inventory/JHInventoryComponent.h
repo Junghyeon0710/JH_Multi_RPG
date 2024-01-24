@@ -77,6 +77,9 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerOnDropEvent(const FSlotDataTable& SourceItem, const FSlotDataTable& TargetItem, const int32& SourceIndex, const int32& TargetIndex);
+
+	UFUNCTION(Server, Reliable)
+	void ServerBuyItem(const FSlotDataTable& Item);
 	
 	void SwapDraggedItems(TArray<FSlotDataTable>& MyItem, const FSlotDataTable& SourceItem, const FSlotDataTable& TargetItem, const int32& SourceIndex, const int32& TargetIndex, const int32& EquippedIndex = -1);
 	FOnGoldChanged OnGoldChanged;
@@ -98,7 +101,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UJHUserWidget> IenterWidget;
 
-	UPROPERTY(VisibleAnywhere,ReplicatedUsing = OnRep_Gold)
+	UPROPERTY(EditAnywhere,ReplicatedUsing = OnRep_Gold)
 	int32 Gold;
 
 	UFUNCTION()
@@ -156,6 +159,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Count")
 	int32 PotionCount = 0;
 
+	
+	bool bCanBuy;
 
 
 	UPROPERTY(EditAnywhere, Category = "Spawn Actor")
