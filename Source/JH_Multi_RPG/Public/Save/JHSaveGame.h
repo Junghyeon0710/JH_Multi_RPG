@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "../Character/CharacterInfo/CharacterInfo.h"
 #include "JHSaveGame.generated.h"
 
 /**
@@ -13,5 +14,7 @@ UCLASS()
 class JH_MULTI_RPG_API UJHSaveGame : public USaveGame
 {
 	GENERATED_BODY()
-	
+public:
+	UPROPERTY(EditAnywhere)
+	FCharacterInfo CharacterInfo;
 };
