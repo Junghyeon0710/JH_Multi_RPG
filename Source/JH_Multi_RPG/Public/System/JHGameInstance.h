@@ -25,10 +25,16 @@ public:
 	void ShowCharacterEditor();
 
 	UFUNCTION(BlueprintCallable)
+	void ShowOptionMesnu();
+
+	UFUNCTION(BlueprintCallable)
+	void ShowLodingScreen();
+
+	UFUNCTION(BlueprintCallable)
 	void CheckforSavedCharacterInfo();
 
 	UFUNCTION(BlueprintCallable)
-	void LoadCharacterInfo();
+	UJHSaveGame* LoadCharacterInfo();
 
 	UFUNCTION(BlueprintCallable)
 	void SaveCharacterInfo();
@@ -41,6 +47,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CreateCharacter(const FText& Name);
+
 protected:
 
 	UPROPERTY()
@@ -54,11 +61,23 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UJHUserWidget> CharacterEditorWidgetClass;
-	
-	UPROPERTY(EditAnywhere)
-	FString PlayerName = FString();
+
+	UPROPERTY()
+	TObjectPtr<UJHUserWidget> OptionWidget;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UJHUserWidget> OptionWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UJHUserWidget> LoadingScreenWidget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UJHUserWidget> LoadingWidgetClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString PlayerName = FString();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCharacterInfo CharacterInfo;
 
 	UPROPERTY()

@@ -10,11 +10,17 @@
 /**
  * 
  */
+class USkeletalMeshComponent;
+
 UCLASS()
 class JH_MULTI_RPG_API UJHSaveGame : public USaveGame
 {
 	GENERATED_BODY()
 public:
+
 	UPROPERTY(EditAnywhere)
 	FCharacterInfo CharacterInfo;
+
+
+
 };

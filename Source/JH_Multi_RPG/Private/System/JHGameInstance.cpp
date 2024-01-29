@@ -9,13 +9,10 @@
 void UJHGameInstance::ShowMainMenu()
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-	if (MainMenuWidget)
-	{
-		MainMenuWidget->AddToViewport();
-	}
-	else
+	if (MainMenuWidget == nullptr)
 	{
 		MainMenuWidget = CreateWidget<UJHUserWidget>(PlayerController, MainMenuWidgetClass);
+
 	}
 	MainMenuWidget->AddToViewport();
 	FInputModeUIOnly Mode;
@@ -26,25 +23,42 @@ void UJHGameInstance::ShowMainMenu()
 void UJHGameInstance::ShowCharacterEditor()
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-	if (CharacterEditorWidget)
-	{
-		CharacterEditorWidget->AddToViewport();
-	}
-	else
+	if (CharacterEditorWidget == nullptr)
 	{
 		CharacterEditorWidget = CreateWidget<UJHUserWidget>(PlayerController, CharacterEditorWidgetClass);
 	}
 	CharacterEditorWidget->AddToViewport();
+	PlayerController->bShowMouseCursor = true;
+}
+
+void UJHGameInstance::ShowOptionMesnu()
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (CharacterEditorWidget == nullptr)
+	{
+		OptionWidget = CreateWidget<UJHUserWidget>(PlayerController, OptionWidgetClass);
+	}
+	OptionWidget->AddToViewport();
 	FInputModeUIOnly Mode;
 	PlayerController->SetInputMode(Mode);
 	PlayerController->bShowMouseCursor = true;
+}
+
+void UJHGameInstance::ShowLodingScreen()
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (LoadingScreenWidget == nullptr)
+	{
+		LoadingScreenWidget = CreateWidget<UJHUserWidget>(PlayerController, LoadingWidgetClass);
+	}
+	LoadingScreenWidget->AddToViewport();
 }
 
 void UJHGameInstance::CheckforSavedCharacterInfo()
 {
 	if (UGameplayStatics::DoesSaveGameExist(PlayerName, 0))
 	{
-		LoadCharacterInfo();
+		JHSaveGame = LoadCharacterInfo();
 	}
 	else
 	{
@@ -52,11 +66,9 @@ void UJHGameInstance::CheckforSavedCharacterInfo()
 	}
 }
 
-void UJHGameInstance::LoadCharacterInfo()
+UJHSaveGame* UJHGameInstance::LoadCharacterInfo()
 {
-	UJHSaveGame* SaveGame = Cast<UJHSaveGame>(UGameplayStatics::LoadGameFromSlot(PlayerName, 0));
-
-	CharacterInfo = SaveGame->CharacterInfo;
+	return Cast<UJHSaveGame>(UGameplayStatics::LoadGameFromSlot(PlayerName, 0));
 }
 
 void UJHGameInstance::SaveCharacterInfo()
@@ -98,3 +110,4 @@ void UJHGameInstance::CreateCharacter(const FText& Name)
 	JHSaveGame->CharacterInfo = CharacterInfo;
 	UGameplayStatics::SaveGameToSlot(JHSaveGame, Name.ToString(), 0);
 }
+
