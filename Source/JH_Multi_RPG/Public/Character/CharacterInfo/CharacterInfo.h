@@ -5,7 +5,8 @@
 #include "CoreMinimal.h"
 #include "CharacterInfo.generated.h"
 
-class AJHCharacter;
+class UMaterialInterface;
+
 USTRUCT(BlueprintType)
 struct FCharacterInfo
 {
@@ -15,5 +16,5 @@ struct FCharacterInfo
 	FText Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<USkeletalMeshComponent> Mesh;
+	TArray<TObjectPtr<UMaterialInterface>> MeshMaterial;
 };

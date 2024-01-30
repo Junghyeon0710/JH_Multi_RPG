@@ -48,8 +48,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateCharacter(const FText& Name);
 
-protected:
-
 	UPROPERTY()
 	TObjectPtr<UJHUserWidget> MainMenuWidget;
 

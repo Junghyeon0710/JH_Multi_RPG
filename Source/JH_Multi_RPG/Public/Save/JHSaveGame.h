@@ -18,9 +18,6 @@ class JH_MULTI_RPG_API UJHSaveGame : public USaveGame
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FCharacterInfo CharacterInfo;
-
-
-
 };

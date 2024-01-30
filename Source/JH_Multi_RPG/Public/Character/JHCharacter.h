@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "../Interfaces/InventoryInterface.h"
+#include "CharacterInfo/CharacterInfo.h"
 #include "JHCharacter.generated.h"
 
 class USpringArmComponent;
@@ -18,6 +19,7 @@ class USkillComponent;
 class UJHInventoryComponent;
 class UHealthComponent;
 class USceneCaptureComponent2D;
+class UMaterialInterface;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -118,6 +120,17 @@ public:
 	virtual void SetShield_Implementation(UStaticMesh* ShieldMesh) override;
 
 	/** /InventoryInterface*/
+
+	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
+
+	UPROPERTY()
+	FCharacterInfo CharacterInfo;
+
+	UFUNCTION(Server,Reliable)
+	void ServerJoinCharacter(AJHCharacter* Player, const FCharacterInfo& Info);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiUpdateAllCharacter(AJHCharacter* Player, const FCharacterInfo& PlayerInfo);
 
 protected:
 	// APawn interface

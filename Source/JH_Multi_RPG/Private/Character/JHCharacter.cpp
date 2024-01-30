@@ -19,6 +19,11 @@
 #include <../Public/Item/DataTable/MoneyDataTable.h>
 #include "Character/Component/HealthComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "System/JHGameInstance.h"
+#include "Save/JHSaveGame.h"
+#include "GameMode/JHGameMode.h"
+#include "Kismet/GameplayStatics.h"
+
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -76,6 +81,53 @@ AJHCharacter::AJHCharacter()
 
 }
 
+void AJHCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			Subsystem->AddMappingContext(InventoryContext, 0);
+		}
+	}
+
+	if (IsLocallyControlled())
+	{
+		JH_PlayerController = Cast<AJH_PlayerController>(Controller);
+		if (JH_PlayerController)
+		{
+			AJHHUD* JHHUD = Cast<AJHHUD>(JH_PlayerController->GetHUD());
+			if (JHHUD)
+			{
+				JHHUD->InitOverlay(SkillComponent, JHInventoryComponent, HealthComponent);
+			}
+		}
+		SceneCaptureComponent2D->ShowOnlyActorComponents(this);
+	}
+
+	if (IsLocallyControlled())
+	{
+		UJHGameInstance* GameInstance = Cast<UJHGameInstance>(GetGameInstance());
+		CharacterInfo = GameInstance->CharacterInfo;
+
+		UJHSaveGame* SaveGame = Cast<UJHSaveGame>(UGameplayStatics::LoadGameFromSlot(CharacterInfo.Name.ToString(), 0));
+		if (SaveGame)
+		{
+			int32 index = 0;
+			for (const auto& Material : SaveGame->CharacterInfo.MeshMaterial)
+			{
+				GetMesh()->SetMaterial(index, Material);
+				index++;
+			}
+			ServerJoinCharacter(this, CharacterInfo);
+		}
+	}
+}
+
 void AJHCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -114,34 +166,24 @@ void AJHCharacter::SetShield_Implementation(UStaticMesh* ShieldMesh)
 	SceneCaptureComponent2D->CaptureScene();
 }
 
-void AJHCharacter::BeginPlay()
+void AJHCharacter::ServerJoinCharacter_Implementation(AJHCharacter* Player, const FCharacterInfo& Info)
 {
-	Super::BeginPlay();
-
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	AJHGameMode* GameMode = GetWorld()->GetAuthGameMode<AJHGameMode>();
+	if (GameMode)
 	{
-
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-			Subsystem->AddMappingContext(InventoryContext, 0);
-		}
+		GameMode->CharacterJoin(Player, Info);
+		GameMode->UpdateAllCharacter();
 	}
+}
 
-	if (IsLocallyControlled())
+void AJHCharacter::MultiUpdateAllCharacter_Implementation(AJHCharacter* Player, const FCharacterInfo& PlayerInfo)
+{
+	int32 index = 0;
+	for (const auto& Material : PlayerInfo.MeshMaterial)
 	{
-		JH_PlayerController = Cast<AJH_PlayerController>(Controller);
-		if (JH_PlayerController)
-		{
-			AJHHUD* JHHUD = Cast<AJHHUD>(JH_PlayerController->GetHUD());
-			if (JHHUD)
-			{
-				JHHUD->InitOverlay(SkillComponent,JHInventoryComponent,HealthComponent);
-			}
-		}
-		SceneCaptureComponent2D->ShowOnlyActorComponents(this);
+		Player->GetMesh()->SetMaterial(index, Material);
+		index++;
 	}
-
 }
 
 void AJHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
