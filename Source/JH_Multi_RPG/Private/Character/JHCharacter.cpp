@@ -124,8 +124,15 @@ void AJHCharacter::BeginPlay()
 				index++;
 			}
 			ServerJoinCharacter(this, CharacterInfo);
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%d"), this));
+
 		}
 	}
+	if(HasAuthority())
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("%d"), this));
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("%s"), *CharacterInfo.Name.ToString()));
+
 }
 
 void AJHCharacter::Tick(float DeltaTime)
@@ -168,6 +175,8 @@ void AJHCharacter::SetShield_Implementation(UStaticMesh* ShieldMesh)
 
 void AJHCharacter::ServerJoinCharacter_Implementation(AJHCharacter* Player, const FCharacterInfo& Info)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Black, FString::Printf(TEXT("%d"), this));
+
 	AJHGameMode* GameMode = GetWorld()->GetAuthGameMode<AJHGameMode>();
 	if (GameMode)
 	{

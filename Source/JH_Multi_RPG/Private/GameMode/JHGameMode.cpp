@@ -6,6 +6,7 @@
 
 void AJHGameMode::CharacterJoin(AJHCharacter* Player,const FCharacterInfo& PlayerInfo)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Server%d"), Player));
 	PlayerCharacters.Add(Player);
 	PlayerCharacterInfos.Add(PlayerInfo);
 }
