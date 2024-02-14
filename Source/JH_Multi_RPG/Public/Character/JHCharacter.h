@@ -20,6 +20,7 @@ class UJHInventoryComponent;
 class UHealthComponent;
 class USceneCaptureComponent2D;
 class UMaterialInterface;
+class UJHUserWidget;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -108,6 +109,10 @@ class AJHCharacter : public ACharacter , public IInventoryInterface
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* PickupItemAction;
 
+	/** I 인벤토리 액션 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* EnterAction;
+
 public:
 	AJHCharacter();
 	virtual void Tick(float DeltaTime) override;
@@ -173,6 +178,9 @@ protected:
 
 	/** 아이템 줍기*/
 	void PickupItem();
+
+	/** 채팅창 온 오프*/
+	void EnterKeyChat();
 private:
 
 	/** 카메라 줌 업 다운 값*/
@@ -204,6 +212,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> Shield;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UJHUserWidget> ChatWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UJHUserWidget> ChatWidget;
+
+
+	bool bIsChatIsValld = true;
 	
 
 public:

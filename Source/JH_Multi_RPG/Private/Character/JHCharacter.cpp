@@ -23,6 +23,7 @@
 #include "Save/JHSaveGame.h"
 #include "GameMode/JHGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/Widget/JHUserWidget.h"
 
 
 
@@ -126,6 +127,11 @@ void AJHCharacter::BeginPlay()
 			ServerJoinCharacter(this, CharacterInfo);
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%d"), this));
 
+		}
+
+		if (ChatWidget == nullptr)
+		{
+			ChatWidget = CreateWidget<UJHUserWidget>(GetWorld(), ChatWidgetClass);
 		}
 	}
 	if(HasAuthority())
@@ -233,6 +239,8 @@ void AJHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		//Inventory
 		EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Started, this, &AJHCharacter::InventoryKeyPress);
 		EnhancedInputComponent->BindAction(PickupItemAction, ETriggerEvent::Started, this, &AJHCharacter::PickupItem);
+
+		EnhancedInputComponent->BindAction(EnterAction, ETriggerEvent::Started, this, &AJHCharacter::EnterKeyChat);
 
 	}
 	else
@@ -347,5 +355,20 @@ void AJHCharacter::PickupItem()
 	if(JHInventoryComponent == nullptr) return;
 
 	JHInventoryComponent->ServerAddToInventory();
+}
+
+void AJHCharacter::EnterKeyChat()
+{
+	bIsChatIsValld = !bIsChatIsValld;
+
+	if (bIsChatIsValld)
+	{
+		ChatWidget->AddToViewport();
+	}
+	else if (!bIsChatIsValld && IsValid(ChatWidget))
+	{
+		ChatWidget->RemoveFromParent();
+	}
+
 }
 
